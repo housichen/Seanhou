@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+  <title>Sean Hou</title>
+  <script>
+    // apply the saved language before first paint
+    try {
+      var savedLang = localStorage.getItem('lang') === 'zh' ? 'zh' : 'en';
+      document.documentElement.lang = savedLang;
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-theme="dark" data-active="home">
+
+  <!-- ============================================================
+       Fixed navigation — the race car slides above the active word
+       ============================================================ -->
+  <header class="site-nav" id="siteNav">
+    <img class="nav-car" id="navCar" src="images/logo.png" alt="" />
+
+    <a class="nav-item nav-home-link"    data-target="home"    href="#home" data-i18n="nav-home">Home</a>
+    <a class="nav-item nav-about-link"   data-target="about"   href="#about" data-i18n="nav-about">About</a>
+    <a class="nav-item nav-project-link" data-target="project" href="#project" data-i18n="nav-project">Project</a>
+    <a class="nav-item nav-contact-link" data-target="contact" href="#contact" data-i18n="nav-contact">Contact</a>
+
+    <span class="nav-sep sep-home"></span>
+    <span class="nav-sep sep-about"></span>
+    <span class="nav-sep sep-project"></span>
+  </header>
+
+  <!-- ============================================================
+       01 HOME
+       ============================================================ -->
+  <section class="section sec-home" id="home" data-theme="dark">
+
+    <!-- ===== two rows of full-bleed photo tiles, sliding left ===== -->
+    <div class="wall" aria-hidden="true">
+      <div class="wall-row wall-top">
+        <div class="wall-track">
+          <div class="wall-seq">
+            <img src="images/home/tiles/t-01.jpg" alt="" /><img src="images/home/tiles/t-02.jpg" alt="" /><img src="images/home/tiles/t-03.jpg" alt="" /><img src="images/home/tiles/t-04.jpg" alt="" /><img src="images/home/tiles/t-05.jpg" alt="" /><img src="images/home/tiles/t-06.jpg" alt="" /><img src="images/home/tiles/t-07.jpg" alt="" /><img src="images/home/tiles/t-08.jpg" alt="" />
+          </div>
+          <div class="wall-seq">
+            <img src="images/home/tiles/t-01.jpg" alt="" /><img src="images/home/tiles/t-02.jpg" alt="" /><img src="images/home/tiles/t-03.jpg" alt="" /><img src="images/home/tiles/t-04.jpg" alt="" /><img src="images/home/tiles/t-05.jpg" alt="" /><img src="images/home/tiles/t-06.jpg" alt="" /><img src="images/home/tiles/t-07.jpg" alt="" /><img src="images/home/tiles/t-08.jpg" alt="" />
+          </div>
+        </div>
+      </div>
+
+      <div class="wall-row wall-bottom">
+        <div class="wall-track">
+          <div class="wall-seq">
+            <img src="images/home/tiles/t-09.jpg" alt="" /><img src="images/home/tiles/t-10.jpg" alt="" /><img src="images/home/tiles/t-11.jpg" alt="" /><img src="images/home/tiles/t-12.jpg" alt="" /><img src="images/home/tiles/t-13.jpg" alt="" /><img src="images/home/tiles/t-14.jpg" alt="" /><img src="images/home/tiles/t-15.jpg" alt="" />
+          </div>
+          <div class="wall-seq">
+            <img src="images/home/tiles/t-09.jpg" alt="" /><img src="images/home/tiles/t-10.jpg" alt="" /><img src="images/home/tiles/t-11.jpg" alt="" /><img src="images/home/tiles/t-12.jpg" alt="" /><img src="images/home/tiles/t-13.jpg" alt="" /><img src="images/home/tiles/t-14.jpg" alt="" /><img src="images/home/tiles/t-15.jpg" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== two 3D extruded text tracks (behind the hero photo) ===== -->
+    <div class="t3d t3d-name" aria-hidden="true">
+      <div class="t3d-plane">
+        <div class="t3d-layer t3d-ghost"><div class="t3d-track"><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span></div></div>
+        <div class="t3d-layer t3d-front"><div class="t3d-track"><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span></div></div>
+      </div>
+    </div>
+
+    <div class="t3d t3d-role" aria-hidden="true">
+      <div class="t3d-plane">
+        <div class="t3d-layer t3d-ghost"><div class="t3d-track"><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span></div></div>
+        <div class="t3d-layer t3d-front"><div class="t3d-track"><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span></div></div>
+      </div>
+    </div>
+
+    <!-- ===== central portrait panel, overlaps everything ===== -->
+    <div class="hero-photo">
+      <img src="images/home-1-cut.png" alt="Sean Hou with a camera" data-i18n-alt="alt-home" />
+    </div>
+
+    <a class="scroll-hint" href="#about" aria-label="Scroll to About">
+      <span class="mouse"><i></i></span>
+      <span class="scroll-word" data-i18n="scroll">Scroll</span>
+    </a>
+  </section>
+
+  <!-- ============================================================
+       02 ABOUT
+       ============================================================ -->
+  <section class="section sec-about" id="about" data-theme="dark">
+
+    <div class="side-bar"></div>
+    <h1 class="section-label" data-i18n="about-label">ABOUT ME</h1>
+    <span class="dash dash-1"></span>
+    <span class="dash dash-2"></span>
+    <h2 class="heading" data-i18n="about-heading">Who I Am</h2>
+
+    <!-- 01 Photographer -->
+    <div class="role role-1">
+      <span class="role-num">01</span><span class="role-gap"> <br /></span><span class="role-title" data-i18n="role-1">PHOTOGRAPHER</span>
+    </div>
+    <p class="bio bio-1"
+      data-i18n-html="bio-1">I'm Sean Hou, a Grade 9 student based in Beijing. I'm a person who loves
+      being behind the camera — not just taking photos, but actually walking
+      through a city at sunrise, waiting for the right light, and trying to
+      capture how a place feels.<br /><br /><br />
+    </p>
+    <img class="photo photo-1" src="images/about-camera.jpg" alt="Camera shooting the Shanghai skyline at night" data-i18n-alt="alt-camera" />
+
+    <div class="divider divider-1"></div>
+
+    <!-- 02 Captain -->
+    <div class="role role-2">
+      <span class="role-num">02 <br /></span><span class="role-title role-title-warm" data-i18n="role-2">CAPTAIN</span>
+    </div>
+    <p class="bio bio-2" data-i18n-html="bio-2">
+      I'm also captain of my middle school flag football team. Being a
+      captain has taught me more than just plays and strategies — it's taught me
+      how to communicate, how to keep a team calm under pressure.<br />
+    </p>
+    <img class="photo photo-2" src="images/captain.png" alt="Flag football player making a catch" loading="lazy" data-i18n-alt="alt-captain" />
+
+    <div class="divider divider-2"></div>
+
+    <!-- 03 Teacher -->
+    <div class="role role-3">
+      <span class="role-num">03 <br /></span><span class="role-title" data-i18n="role-3">Teacher</span>
+    </div>
+    <p class="bio bio-3" data-i18n-html="bio-3">
+      The project is to let us become a "teacher"and go to teach the kids in
+      mountainous areas of Guizhou,and the kids are all stay-at-home children.I
+      went to teach for 2 time the first time is at 2024 my mom force me to go
+      and the 2 time is 2026 this time i went because my self
+    </p>
+    <img class="photo photo-3" src="images/teacher.jpg" alt="Sean teaching in a Guizhou classroom" loading="lazy" data-i18n-alt="alt-teacher" />
+  </section>
+
+  <!-- ============================================================
+       03 PROJECT — PHOTOGRAPHY
+       ============================================================ -->
+  <section class="section sec-project" id="project" data-theme="warm">
+
+    <span class="p-bar p-bar-1"></span>
+    <h1 class="p-title" data-i18n="p-title">Photography</h1>
+    <img class="p-hero" src="images/proj-hero.jpg" alt="Photography work" loading="lazy" data-i18n-alt="alt-hero" />
+    <p class="p-desc" data-i18n-html="p-desc">
+      We were exposed to photography during an elp in Grade 7. <br />While
+      completing this elp, I fell in love with photography. So in the following
+      year, I devoted a lot to this.
+    </p>
+    <div class="p-line p-line-1"></div>
+    <!-- ceremonial transition fires when this crosses the viewport center -->
+    <span class="works-sentinel" aria-hidden="true"></span>
+
+    <span class="p-bar p-bar-2"></span>
+    <h2 class="p-works" data-i18n="p-works">My Works</h2>
+    <h3 class="p-cityscape" data-i18n="p-cityscape">City Scape</h3>
+    <div class="gear gear-city">
+      <img src="images/nikon-z-body.png" alt="Nikon Z" />
+      <img src="images/tamron-18-300.png" alt="Tamron 18-300mm" />
+      <span class="gear-text">Nikon Z · Tamron 18-300mm</span>
+    </div>
+
+    <!-- row 1 -->
+    <img class="work c1" src="images/city-2.jpg" alt="Jing'an Temple at dusk" loading="lazy" data-i18n-alt="alt-city-2" />
+    <img class="work c2" src="images/city-3.jpg" alt="Oriental Pearl Tower close-up" loading="lazy" data-i18n-alt="alt-city-3" />
+    <img class="work c3" src="images/city-7.jpg" alt="Office towers reflected at night" loading="lazy" data-i18n-alt="alt-city-7" />
+    <img class="work c4" src="images/city-1.jpg" alt="Oriental Pearl Tower over light trails" loading="lazy" data-i18n-alt="alt-city-1" />
+    <!-- row 2 -->
+    <img class="work c5" src="images/city-8.jpg" alt="Three Shanghai skyscrapers" loading="lazy" data-i18n-alt="alt-city-8" />
+    <img class="work c6" src="images/city-wide.jpg" alt="Twin towers over highway light trails" loading="lazy" data-i18n-alt="alt-city-wide" />
+    <img class="work c7" src="images/city-6.jpg" alt="Old Hu Barbershop on a quiet Chengdu lane at night" loading="lazy" data-i18n-alt="alt-city-6" />
+    <img class="work c8" src="images/city-5.jpg" alt="Teal light pillars of the Tower of Vitality" loading="lazy" data-i18n-alt="alt-city-5" />
+    <!-- row 3 — two wide shots -->
+    <img class="work cw cw-1" src="images/wide-1.jpg" alt="Tianfu Art Museum reflected in the water at blue hour" loading="lazy" data-i18n-alt="alt-wide-1" />
+    <img class="work cw cw-2" src="images/wide-2.jpg" alt="The Bund skyline at night" loading="lazy" data-i18n-alt="alt-wide-2" />
+
+    <div class="p-line p-line-2"></div>
+    <div class="p-line p-line-3"></div>
+
+    <h3 class="p-cars" data-i18n="p-cars">Cars</h3>
+    <div class="gear gear-cars">
+      <img src="images/nikon-z-body.png" alt="Nikon Z" />
+      <img src="images/tamron-18-300.png" alt="Tamron 18-300mm" />
+      <span class="gear-text">Nikon Z · Tamron 18-300mm</span>
+    </div>
+
+    <img class="car car-01" src="images/car-01.jpg" alt="GT3 01" loading="lazy" />
+    <img class="car car-02" src="images/car-02.jpg" alt="GT3 02" loading="lazy" />
+    <img class="car car-03" src="images/car-03.jpg" alt="GT3 03" loading="lazy" />
+    <img class="car car-04" src="images/car-04.jpg" alt="GT3 04" loading="lazy" />
+    <img class="car car-05" src="images/car-05.jpg" alt="GT3 05" loading="lazy" />
+    <img class="car car-06" src="images/car-06.jpg" alt="GT3 06" loading="lazy" />
+    <img class="car car-07" src="images/car-07.jpg" alt="GT3 07" loading="lazy" />
+    <img class="car car-08" src="images/car-08.jpg" alt="GT3 08" loading="lazy" />
+    <img class="car car-09" src="images/car-09.jpg" alt="GT3 09" loading="lazy" />
+    <img class="car car-10" src="images/car-10.jpg" alt="GT3 10" loading="lazy" />
+    <img class="car car-11" src="images/car-11.jpg" alt="GT3 11" loading="lazy" />
+    <img class="car car-12" src="images/car-12.jpg" alt="GT3 12" loading="lazy" />
+    <img class="car car-13" src="images/car-13.jpg" alt="GT3 13" loading="lazy" />
+    <img class="car car-14" src="images/car-14.jpg" alt="GT3 14" loading="lazy" />
+    <img class="car car-15" src="images/car-15.jpg" alt="GT3 15" loading="lazy" />
+    <img class="car car-16" src="images/car-16.jpg" alt="GT3 16" loading="lazy" />
+  </section>
+
+  <!-- ============================================================
+       04 CONTACT
+       ============================================================ -->
+  <section class="section sec-contact" id="contact" data-theme="dark">
+    <main class="contact-content">
+      <span class="p-bar contact-bar"></span>
+      <p class="contact-kicker" data-i18n="contact-kicker">SAY HELLO</p>
+      <h1 class="contact-title" data-i18n="contact-title">Contact Me</h1>
+
+      <div class="contact-layout">
+        <div class="contact-info">
+          <div class="contact-line">
+            <span data-i18n="contact-based">Based in</span>
+            <strong data-i18n="contact-city">Beijing, China</strong>
+          </div>
+          <div class="contact-line">
+            <span data-i18n="contact-email">Email</span>
+            <strong>your-email@example.com</strong>
+          </div>
+          <div class="contact-line">
+            <span>Instagram</span>
+            <strong>@your_handle</strong>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm" novalidate>
+          <label>
+            <span data-i18n="form-name">Name</span>
+            <input type="text" name="name" id="formName" placeholder="Your name" data-i18n-ph="ph-name" />
+          </label>
+          <label>
+            <span data-i18n="form-email">Email</span>
+            <input type="email" name="email" id="formEmail" placeholder="you@example.com" />
+          </label>
+          <label>
+            <span data-i18n="form-message">Message</span>
+            <textarea name="message" id="formMessage" placeholder="Write something..." data-i18n-ph="ph-message"></textarea>
+          </label>
+          <p class="form-error" id="formError"></p>
+          <button type="submit" class="btn" data-i18n="form-send">Send Message</button>
+        </form>
+      </div>
+    </main>
+  </section>
+
+  <!-- ============================================================
+       Ceremonial transition: intro → My Works
+       ============================================================ -->
+  <div class="works-curtain" id="worksCurtain" aria-hidden="true">
+    <span class="cw-kicker" data-i18n="cw-kicker">PHOTOGRAPHY · 02</span>
+    <span class="cw-title" data-i18n="cw-title">My Works</span>
+  </div>
+
+  <!-- language switch (stays available inside the photo viewer too) -->
+  <button class="lang-btn" id="langBtn" type="button" data-i18n-aria="aria-lang">
+    <span class="lang-opt lang-en">EN</span><i>/</i><span class="lang-opt lang-zh">中</span>
+  </button>
+
+  <!-- ============================================================
+       Photo detail viewer (large image + parameters + introduction)
+       ============================================================ -->
+  <div class="pv" id="photoViewer" role="dialog" aria-modal="true" aria-label="Photo detail" aria-hidden="true" data-i18n-aria="aria-pv">
+    <button class="pv-close" id="pvClose" aria-label="Close detail view" data-i18n-aria="aria-pv-close">&times;</button>
+    <button class="pv-arrow pv-prev" id="pvPrev" aria-label="Previous photo" data-i18n-aria="aria-pv-prev">&lsaquo;</button>
+    <button class="pv-arrow pv-next" id="pvNext" aria-label="Next photo" data-i18n-aria="aria-pv-next">&rsaquo;</button>
+
+    <div class="pv-stage">
+      <div class="pv-index" id="pvIndex"></div>
+      <img class="pv-img" id="pvImg" alt="" />
+      <p class="pv-meta" id="pvMeta"></p>
+      <div class="pv-gear">
+        <img src="images/nikon-z-body.png" alt="Nikon Z" />
+        <img src="images/tamron-18-300.png" alt="Tamron 18-300mm" />
+      </div>
+      <div class="pv-intro">
+        <p class="pv-label" data-i18n="pv-label">Introduction</p>
+        <p class="pv-body" id="pvBody"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       Custom camera-lens cursor (replaces native cursor)
+       ============================================================ -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-lens"></div>
+    <div class="cursor-ring"></div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
