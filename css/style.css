@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400;1,500;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:ital,wght@0,400;0,500;0,700;0,800;0,900;1,400;1,500;1,700;1,800;1,900&display=swap');
 
 /* ============================================================
    Reset & tokens
@@ -9,21 +9,41 @@
   --white: #fff;
   --warm: #ffe9e9;
 
+  /* liquid-glass recipe — applied to every frosted panel */
+  --glass-bg:
+    linear-gradient(160deg,
+      rgba(255,255,255,0.30) 0%,
+      rgba(255,255,255,0.12) 30%,
+      rgba(255,255,255,0.05) 55%,
+      rgba(255,255,255,0.02) 100%);
+  --glass-border: rgba(255, 255, 255, 0.42);
+  --glass-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.35),
+    inset 1.5px 0 0 rgba(255, 255, 255, 0.28),
+    inset -1.5px 0 0 rgba(0, 0, 0, 0.18),
+    inset 0 18px 40px rgba(255, 255, 255, 0.10);
+
   /* nav coordinates — light (home) theme defaults */
   --nav-y: 53px;
   --sep-y: 48px;
   --car-y: -26px;
-  --nx-home: 62px;
-  --nx-about: 194px;
-  --nx-project: 337px;
-  --nx-contact: 496px;
-  --sx-home: 172px;
-  --sx-about: 316px;
-  --sx-project: 467px;
-  --car-home: 54px;
-  --car-about: 186px;
-  --car-project: 343px;
-  --car-contact: 501px;
+  --nx-home: 58px;
+  --nx-about: 175px;
+  --nx-project: 300px;
+  --nx-ask: 438px;
+  --nx-contact: 700px;
+  --sx-home: 168px;
+  --sx-about: 297px;
+  --sx-project: 433px;
+  --sx-ask: 682px;
+  --car-home: 50px;
+  --car-about: 167px;
+  --car-project: 292px;
+  --car-ask: 430px;
+  --car-contact: 692px;
   --nav-color: var(--black);
 
   /* which word the car sits above (set by JS) */
@@ -93,16 +113,19 @@ body[data-theme="warm"] {
   --sep-y: 67px;
   --car-y: -7px;
   --nx-home: 91px;
-  --nx-about: 223px;
-  --nx-project: 366px;
-  --nx-contact: 525px;
+  --nx-about: 208px;
+  --nx-project: 333px;
+  --nx-ask: 471px;
+  --nx-contact: 733px;
   --sx-home: 201px;
-  --sx-about: 345px;
-  --sx-project: 496px;
+  --sx-about: 330px;
+  --sx-project: 466px;
+  --sx-ask: 715px;
   --car-home: 83px;
-  --car-about: 215px;
-  --car-project: 372px;
-  --car-contact: 530px;
+  --car-about: 200px;
+  --car-project: 325px;
+  --car-ask: 463px;
+  --car-contact: 725px;
   --nav-color: var(--white);
 }
 
@@ -112,6 +135,7 @@ body[data-theme="warm"] { --nav-color: var(--warm); }
 body[data-active="home"]    { --car-x: var(--car-home); }
 body[data-active="about"]   { --car-x: var(--car-about); }
 body[data-active="project"] { --car-x: var(--car-project); }
+body[data-active="ask"]     { --car-x: var(--car-ask); }
 body[data-active="contact"] { --car-x: var(--car-contact); }
 
 .nav-item {
@@ -137,6 +161,7 @@ body[data-active="contact"] { --car-x: var(--car-contact); }
 .nav-home-link    { left: var(--nx-home);    width: 100px; }
 .nav-about-link   { left: var(--nx-about);   width: 100px; }
 .nav-project-link { left: var(--nx-project); width: 127px; }
+.nav-ask-link     { left: var(--nx-ask);     width: 250px; }
 .nav-contact-link { left: var(--nx-contact); width: 126px; }
 
 .nav-sep {
@@ -154,6 +179,7 @@ body[data-active="contact"] { --car-x: var(--car-contact); }
 .sep-home    { left: var(--sx-home); }
 .sep-about   { left: var(--sx-about); }
 .sep-project { left: var(--sx-project); }
+.sep-ask     { left: var(--sx-ask); }
 
 .nav-car {
   position: absolute;
@@ -217,6 +243,10 @@ body[data-theme="light"] .nav-car {
   min-height: 4890px;
 }
 
+.sec-ask {
+  min-height: 3000px;
+}
+
 .sec-contact {
   min-height: 100vh;
 }
@@ -224,6 +254,7 @@ body[data-theme="light"] .nav-car {
 /* cinematic vignette on dark sections */
 .sec-about::after,
 .sec-project::after,
+.sec-ask::after,
 .sec-contact::after {
   content: '';
   position: absolute;
@@ -296,143 +327,145 @@ body[data-theme="light"] .nav-car {
   to   { opacity: 1; }
 }
 
-/* ---- 3D extruded italic type: two parallax tracks ---- */
-.t3d {
+/* ---- 3D stage: two text rings orbit the portrait ----
+   One shared preserve-3d context: text at z > 0 crosses in front of
+   the chest, text at z < 0 is occluded by the photo and mirrors
+   (exactly like the reference video). */
+.stage3d {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  perspective: 2300px;
+  perspective-origin: 50% 47%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  opacity: 0;
+  animation: wallIn 1.1s ease 0.45s both;
+}
+
+/* each ring: positioned at the portrait's centre, tilted like a
+   hula-hoop (rotateX: front crosses the waist, back rises behind the
+   shoulders) and leaning sideways (rotateZ) — the two rings lean in
+   OPPOSITE directions and cross like an X, as in the reference */
+.ring {
+  position: absolute;
+  left: 50%;
+  top: 57%;
+  transform-style: preserve-3d;
+}
+
+/* green name ring: left side high, right side low */
+.ring-a { transform: translate(-50%, -50%) rotateX(-13deg) rotateZ(11deg); }
+
+/* yellow script ring: right side high, left side low, a touch steeper */
+.ring-b {
+  top: 52%;
+  transform: translate(-50%, -50%) rotateX(-17deg) rotateZ(-11deg);
+}
+
+/* every ring is rendered twice (back copy + front copy sandwiching the
+   portrait); the front copy only draws camera-facing segments, so the
+   front half of each ring always crosses IN FRONT of the figure */
+.ring.is-front .seg {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.ring-spin {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+  animation: ringSpin linear infinite;
+}
+
+.ring-a .ring-spin { animation-duration: 46s; }
+.ring-b .ring-spin { animation-duration: 68s; animation-direction: reverse; }
+
+@keyframes ringSpin {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+
+/* a segment is one phrase on the cylinder:
+   centre it on the axis, spin it to its slot, push it out to the rim */
+.seg {
   position: absolute;
   left: 0;
-  width: 100%;
-  pointer-events: none;
+  top: 0;
+  transform: translate(-50%, -50%) rotateY(var(--a)) translateZ(var(--r));
   white-space: nowrap;
-  opacity: 0;
-  animation: t3dIn 1.1s ease 0.45s both;
+  line-height: 1;
+  user-select: none;
 }
 
-.t3d-name {
-  top: 43.5%;
-  z-index: 3;
-  font-size: clamp(64px, 15vh, 168px);
-}
-
-.t3d-role {
-  top: 63%;
-  z-index: 2;
-  font-size: clamp(40px, 8.4vh, 98px);
-}
-
-.t3d-plane {
-  position: relative;
-  height: 1.08em;
+/* ring A — the name: huge italic 900, vivid emerald face with a deep
+   forest-green extrusion; sized so "SEAN HOU" fills ~93% of its 30deg
+   arc, reading as one continuous ribbon around the ring */
+.ring-a .seg {
+  --r: 900px;
+  font-size: clamp(72px, 8.8vh, 84px);
   font-style: italic;
   font-weight: 900;
   text-transform: uppercase;
-  line-height: 1;
   letter-spacing: 0.01em;
-  transform: perspective(1500px) rotateX(8deg) skewY(5deg);
-  transform-origin: 50% 50%;
-}
-
-.t3d-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.t3d-track {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-  animation: t3dSlide linear infinite;
-}
-
-.t3d-track span {
-  flex: 0 0 auto;
-  padding-right: 0.32em;
-}
-
-.t3d-track b {
-  font-weight: 900;
-  padding: 0 0.08em;
-}
-
-/* the walls rush past while the giant type drifts slowly behind the figure */
-.t3d-name .t3d-front .t3d-track { animation-duration: 220s; }
-.t3d-name .t3d-ghost .t3d-track { animation-duration: 280s; }
-.t3d-role .t3d-front .t3d-track { animation-duration: 250s; }
-.t3d-role .t3d-ghost .t3d-track { animation-duration: 320s; }
-
-/* ghost echo: blurred, offset, accent-coloured, sits behind the face */
-.t3d-ghost { filter: blur(2.5px); }
-.t3d-name .t3d-ghost { transform: translate(0.08em, 0.09em); opacity: 0.6; }
-.t3d-role .t3d-ghost { transform: translate(-0.08em, 0.08em); opacity: 0.5; }
-
-.t3d-name .t3d-ghost .t3d-track {
-  color: var(--accent);
-  text-shadow: 0 0 26px rgba(204, 255, 0, 0.5);
-}
-
-.t3d-role .t3d-ghost .t3d-track {
-  color: #f2ffe2;
-  text-shadow: 0 0 22px rgba(255, 255, 255, 0.4);
-}
-
-/* front face, SEAN HOU — near-white with a thick dark extrusion */
-.t3d-name .t3d-front .t3d-track {
-  color: #f5ffe9;
+  color: #1fe584;
   text-shadow:
-    0 0 28px rgba(0, 0, 0, 0.55),
-    -1px 1px 0 #3c4831,
-    -2px 2px 0 #35402c,
-    -3px 3px 0 #2f3826,
-    -4px 4px 0 #293121,
-    -5px 5px 0 #232a1c,
-    -6px 6px 0 #1e2418,
-    -7px 7px 0 #191e14,
-    -8px 8px 0 #151911,
-    -9px 9px 0 #12150e,
-    -10px 10px 0 #0f110c,
-    -11px 11px 0 #0c0e09,
-    -12px 13px 0 #0a0b07,
-    -14px 16px 16px rgba(0, 0, 0, 0.65);
+    0 0 30px rgba(0, 0, 0, 0.5),
+    -1px 1px 0 #0d7a45,
+    -2px 2px 0 #0c6f3f,
+    -3px 3px 0 #0a6539,
+    -4px 4px 0 #095a33,
+    -5px 5px 0 #08502d,
+    -6px 6px 0 #074527,
+    -7px 7px 0 #063b21,
+    -8px 8px 0 #05301c,
+    -9px 9px 0 #042616,
+    -10px 10px 0 #031b10,
+    -12px 12px 18px rgba(0, 0, 0, 0.6);
 }
 
-/* front face, ROLES — lime with a deep olive extrusion */
-.t3d-role .t3d-front .t3d-track {
-  color: var(--accent);
+/* ring B — the roles: loose yellow brush script on a smaller,
+   steeper ring. The three words differ a lot in length, so each gets
+   its own size + tracking to fill a similar share of the arc */
+.ring-b .seg {
+  --r: 810px;
+  font-family: 'Caveat', cursive;
+  font-size: clamp(56px, 8.4vh, 84px);
+  font-weight: 700;
+  color: #ffd60a;
   text-shadow:
-    0 0 26px rgba(0, 0, 0, 0.5),
-    1px -1px 0 rgba(247, 255, 205, 0.55),
-    -1px 1px 0 #58681b,
-    -2px 2px 0 #4f5e17,
-    -3px 3px 0 #475515,
-    -4px 4px 0 #3f4b12,
-    -5px 5px 0 #374210,
-    -6px 6px 0 #30390e,
-    -7px 7px 0 #29310c,
-    -8px 8px 0 #23290a,
-    -9px 9px 0 #1d2208,
-    -10px 10px 0 #181c07,
-    -11px 11px 0 #131605,
-    -12px 13px 16px rgba(0, 0, 0, 0.6);
+    0 0 24px rgba(0, 0, 0, 0.45),
+    -1px 1px 0 #8a6d00,
+    -2px 2px 0 #7a6100,
+    -3px 3px 0 #6a5500,
+    -4px 4px 0 #5a4900,
+    -5px 5px 0 #4a3d00,
+    -6px 6px 14px rgba(0, 0, 0, 0.55);
 }
 
-@keyframes t3dSlide {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
+/* Teacher (2nd, 5th, 8th, 11th segment) — short word, scale it up */
+.ring-b .seg:nth-child(3n + 2) {
+  font-size: clamp(78px, 11vh, 110px);
+  letter-spacing: 0.12em;
 }
 
-@keyframes t3dIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+/* Captain (3rd, 6th, 9th, 12th segment) */
+.ring-b .seg:nth-child(3n) {
+  font-size: clamp(76px, 10.5vh, 104px);
+  letter-spacing: 0.1em;
 }
 
-/* ---- central portrait: cutout over the type and wall ---- */
+/* ---- central portrait: a plane at z = 0 inside the 3D stage;
+   the rings wrap around it (front of ring covers the chest,
+   back of ring is hidden behind the shoulders) ---- */
 .hero-photo {
   position: absolute;
   top: 53.5%;
   left: 50%;
   height: 94vh;
-  transform: translate(-50%, -50%);
-  z-index: 4;
+  transform: translate(-50%, -50%) translateZ(0);
   pointer-events: none;
   opacity: 0;
   animation: heroIn 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
@@ -448,8 +481,8 @@ body[data-theme="light"] .nav-car {
 }
 
 @keyframes heroIn {
-  from { opacity: 0; transform: translate(-50%, -47%) scale(0.985); }
-  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity: 0; transform: translate(-50%, -47%) translateZ(0) scale(0.985); }
+  to   { opacity: 1; transform: translate(-50%, -50%) translateZ(0) scale(1); }
 }
 
 /* scroll cue reads white over the dark home stage */
@@ -542,16 +575,16 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
 
 @media (prefers-reduced-motion: reduce) {
   .wall-track,
-  .t3d-track,
+  .ring-spin,
   .hero-photo,
   .wall,
-  .t3d,
+  .stage3d,
   .site-nav > *,
   .scroll-hint,
   .mouse i { animation: none !important; }
 
   .wall,
-  .t3d,
+  .stage3d,
   .hero-photo { opacity: 1; }
 }
 
@@ -611,12 +644,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   font-weight: 500;
   display: inline-block;
   padding: 6px 28px 12px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .role {
@@ -626,12 +659,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   font-weight: 500;
   display: inline-block;
   padding: 10px 28px 14px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .role-1 { left: 154px; top: 506px; }
@@ -652,12 +685,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   line-height: 1.45;
   word-wrap: break-word;
   padding: 26px 32px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
@@ -708,6 +741,239 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
 }
 
 /* ============================================================
+   ASK ME ABOUT — what I can teach (two full pages)
+   ============================================================ */
+.ask-bar {
+  top: 158px;
+}
+
+.ask-heading {
+  top: 288px;
+  width: auto;
+}
+
+/* ---- each topic is a full page, laid out as a loose grid ----
+   aligned to the section content column (left 152px), clear of the
+   side accent bar */
+.ask-page {
+  position: relative;
+  width: 1160px;
+  margin: 0 0 0 152px;
+  padding-top: 520px;
+}
+
+.ask-page-war {
+  padding-top: 80px;
+  margin-bottom: 160px;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 48px;
+}
+
+/* war thunder page: header + stats span full width, blocks go two-up */
+.ask-page-war .ask-page-head,
+.ask-page-war .ask-stats {
+  width: 100%;
+}
+
+/* two-column text blocks on the war thunder page */
+.ask-page-war .ask-block {
+  flex: 1 1 520px;
+  margin-bottom: 28px;
+}
+
+/* page header: number + title + tag, spans full width */
+.ask-page-head {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+
+.ask-page-num {
+  color: var(--accent);
+  font-size: 56px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ask-page-title {
+  color: var(--white);
+  font-size: 84px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ask-page-tag {
+  color: var(--accent);
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 400;
+  margin-left: 8px;
+  opacity: 0.9;
+}
+
+/* images — compact, floated beside text */
+.ask-img-hero,
+.ask-img-side {
+  float: left;
+  width: 320px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 3px solid var(--accent);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ask-img-hero { margin: 0 32px 20px 0; }
+.ask-img-side { margin: 0 32px 20px 0; }
+
+/* ---- PAGE 01 (Photography): portrait images, float LEFT ---- */
+.ask-page-photo .ask-img-hero,
+.ask-page-photo .ask-img-side {
+  float: left;
+  width: 360px;
+  height: 500px;
+  margin: 0 40px 24px 0;
+}
+
+/* street shot — 968×1278 ≈ 0.76 */
+.ask-page-photo .ask-img-hero {
+  height: 470px;
+}
+/* city/tripod shot — 1872×4160 ≈ 0.45 (very tall) */
+.ask-page-photo .ask-img-side {
+  height: 560px;
+}
+
+/* ---- PAGE 02 (War Thunder): landscape images, centered, native ratio ---- */
+.ask-page-war .ask-img-hero,
+.ask-page-war .ask-img-side {
+  flex: 0 0 100%;
+  object-fit: cover;
+  object-position: center;
+  margin: 0 auto 28px;
+  display: block;
+}
+
+.ask-page-war .ask-img-hero {
+  /* player card — 902×746 ≈ 1.21 */
+  max-width: 680px;
+  width: 100%;
+  height: 560px;
+}
+.ask-page-war .ask-img-side {
+  /* stat banner — 782×364 ≈ 2.15 */
+  max-width: 860px;
+  width: 100%;
+  height: 400px;
+}
+
+/* stat badges — a bold strip of hard numbers, only on the War Thunder page */
+.ask-stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.ask-stats .stat {
+  flex: 1;
+  padding: 22px 28px;
+  border-radius: 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ask-stats .stat-num {
+  color: var(--accent);
+  font-size: 46px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ask-stats .stat-label {
+  color: var(--white);
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+/* text blocks — liquid glass panels, full width */
+.ask-block {
+  padding: 30px 36px;
+  color: var(--white);
+  background: var(--glass-bg);
+  backdrop-filter: blur(44px) saturate(2.2);
+  -webkit-backdrop-filter: blur(44px) saturate(2.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  box-shadow: var(--glass-shadow);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.teach-h {
+  color: var(--accent);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.teach-p {
+  color: var(--white);
+  font-size: 27px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.55;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.teach-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.teach-list li {
+  position: relative;
+  color: var(--white);
+  font-size: 25px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.55;
+  padding-left: 30px;
+  margin-bottom: 14px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.teach-list li:last-child {
+  margin-bottom: 0;
+}
+
+.teach-list li::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 13px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ============================================================
    PROJECT — PHOTOGRAPHY
    ============================================================ */
 .p-bar {
@@ -730,12 +996,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   font-weight: 500;
   display: inline-block;
   padding: 6px 28px 12px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .p-hero {
@@ -758,12 +1024,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   font-weight: 400;
   line-height: 1.5;
   padding: 24px 32px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
@@ -787,12 +1053,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   font-weight: 500;
   display: inline-block;
   padding: 6px 28px 12px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .p-cityscape {
@@ -808,12 +1074,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   display: inline-flex;
   align-items: center;
   padding: 0 32px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .p-cars {
@@ -830,12 +1096,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   align-items: center;
   justify-content: center;
   padding: 0 32px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .work {
@@ -870,12 +1136,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   align-items: center;
   gap: 18px;
   padding: 12px 24px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 999px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .gear img {
@@ -936,12 +1202,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   font-weight: 400;
   display: inline-block;
   padding: 8px 22px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 999px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .contact-title {
@@ -953,12 +1219,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   font-weight: 500;
   display: inline-block;
   padding: 6px 28px 12px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .contact-layout {
@@ -972,12 +1238,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   position: relative;
   margin-bottom: 32px;
   padding: 18px 24px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .contact-line span {
@@ -1001,12 +1267,12 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   flex-direction: column;
   gap: 22px;
   padding: 28px;
-  background: linear-gradient(150deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.05) 100%);
+  background: var(--glass-bg);
   backdrop-filter: blur(44px) saturate(2.2);
   -webkit-backdrop-filter: blur(44px) saturate(2.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.42), inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.1), inset 0 10px 30px rgba(255,255,255,0.07);
+  box-shadow: var(--glass-shadow);
 }
 
 .contact-form label {
@@ -1468,7 +1734,10 @@ html[lang="zh"] .lang-btn .lang-zh {
 }
 
 /* ============================================================
-   Liquid glass specular highlight (Apple-style top edge shine)
+   Liquid glass specular highlight
+   Layered catch-lights: a crisp top rim, a bright corner glint,
+   and a soft diagonal sheen — the trio sells "wet glass" better
+   than a single line, even over a flat dark backdrop.
    ============================================================ */
 .heading::before,
 .role::before,
@@ -1482,19 +1751,56 @@ html[lang="zh"] .lang-btn .lang-zh {
 .contact-kicker::before,
 .contact-title::before,
 .contact-line::before,
-.contact-form::before {
+.contact-form::before,
+.ask-block::before {
   content: '';
   position: absolute;
-  top: 1px;
-  left: 10%;
-  right: 10%;
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,255,255,0.75) 50%,
-    transparent 100%);
+  inset: 0;
+  border-radius: inherit;
   pointer-events: none;
   z-index: 1;
+  /* top rim + corner glint + diagonal sheen in one pass */
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.55) 0px,
+      rgba(255,255,255,0.18) 1.5px,
+      rgba(255,255,255,0) 3px,
+      rgba(255,255,255,0) 100%),
+    radial-gradient(120% 90% at 12% 0%,
+      rgba(255,255,255,0.34) 0%,
+      rgba(255,255,255,0) 38%),
+    linear-gradient(120deg,
+      rgba(255,255,255,0.20) 0%,
+      rgba(255,255,255,0) 32%,
+      rgba(255,255,255,0) 68%,
+      rgba(255,255,255,0.08) 100%);
+  mix-blend-mode: screen;
+}
+
+/* a soft under-glow lifts the glass off the page */
+.heading::after,
+.role::after,
+.bio::after,
+.p-title::after,
+.p-desc::after,
+.p-works::after,
+.p-cityscape::after,
+.p-cars::after,
+.gear::after,
+.contact-kicker::after,
+.contact-title::after,
+.contact-line::after,
+.contact-form::after,
+.ask-block::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow:
+    inset 0 -26px 46px rgba(0, 0, 0, 0.22),
+    inset 0 26px 46px rgba(255, 255, 255, 0.05);
 }
 
 /* ============================================================

@@ -25,11 +25,13 @@
     <a class="nav-item nav-home-link"    data-target="home"    href="#home" data-i18n="nav-home">Home</a>
     <a class="nav-item nav-about-link"   data-target="about"   href="#about" data-i18n="nav-about">About</a>
     <a class="nav-item nav-project-link" data-target="project" href="#project" data-i18n="nav-project">Project</a>
+    <a class="nav-item nav-ask-link"     data-target="ask"     href="#ask" data-i18n="nav-ask">Ask me about</a>
     <a class="nav-item nav-contact-link" data-target="contact" href="#contact" data-i18n="nav-contact">Contact</a>
 
     <span class="nav-sep sep-home"></span>
     <span class="nav-sep sep-about"></span>
     <span class="nav-sep sep-project"></span>
+    <span class="nav-sep sep-ask"></span>
   </header>
 
   <!-- ============================================================
@@ -62,24 +64,86 @@
       </div>
     </div>
 
-    <!-- ===== two 3D extruded text tracks (behind the hero photo) ===== -->
-    <div class="t3d t3d-name" aria-hidden="true">
-      <div class="t3d-plane">
-        <div class="t3d-layer t3d-ghost"><div class="t3d-track"><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span></div></div>
-        <div class="t3d-layer t3d-front"><div class="t3d-track"><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span><span>SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b> SEAN HOU <b>✦</b></span></div></div>
-      </div>
-    </div>
+    <!-- ===== 3D stage: two text rings orbit the portrait =====
+         each ring renders TWICE: a back copy behind the portrait and a
+         front copy (back faces hidden) in front of it — the text truly
+         wraps around the figure on every browser -->
+    <div class="stage3d">
 
-    <div class="t3d t3d-role" aria-hidden="true">
-      <div class="t3d-plane">
-        <div class="t3d-layer t3d-ghost"><div class="t3d-track"><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span></div></div>
-        <div class="t3d-layer t3d-front"><div class="t3d-track"><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span><span>PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b> PHOTOGRAPHER <b>✦</b> TEACHER <b>✦</b> CAPTAIN <b>✦</b></span></div></div>
+      <!-- back halves (behind the portrait) -->
+      <div class="ring ring-a" aria-hidden="true">
+        <div class="ring-spin">
+          <span class="seg" style="--a: 0deg">SEAN HOU</span>
+          <span class="seg" style="--a: 30deg">SEAN HOU</span>
+          <span class="seg" style="--a: 60deg">SEAN HOU</span>
+          <span class="seg" style="--a: 90deg">SEAN HOU</span>
+          <span class="seg" style="--a: 120deg">SEAN HOU</span>
+          <span class="seg" style="--a: 150deg">SEAN HOU</span>
+          <span class="seg" style="--a: 180deg">SEAN HOU</span>
+          <span class="seg" style="--a: 210deg">SEAN HOU</span>
+          <span class="seg" style="--a: 240deg">SEAN HOU</span>
+          <span class="seg" style="--a: 270deg">SEAN HOU</span>
+          <span class="seg" style="--a: 300deg">SEAN HOU</span>
+          <span class="seg" style="--a: 330deg">SEAN HOU</span>
+        </div>
       </div>
-    </div>
 
-    <!-- ===== central portrait panel, overlaps everything ===== -->
-    <div class="hero-photo">
-      <img src="images/home-1-cut.png" alt="Sean Hou with a camera" data-i18n-alt="alt-home" />
+      <div class="ring ring-b" aria-hidden="true">
+        <div class="ring-spin">
+          <span class="seg" style="--a: 0deg">Photographer</span>
+          <span class="seg" style="--a: 30deg">Teacher</span>
+          <span class="seg" style="--a: 60deg">Captain</span>
+          <span class="seg" style="--a: 90deg">Photographer</span>
+          <span class="seg" style="--a: 120deg">Teacher</span>
+          <span class="seg" style="--a: 150deg">Captain</span>
+          <span class="seg" style="--a: 180deg">Photographer</span>
+          <span class="seg" style="--a: 210deg">Teacher</span>
+          <span class="seg" style="--a: 240deg">Captain</span>
+          <span class="seg" style="--a: 270deg">Photographer</span>
+          <span class="seg" style="--a: 300deg">Teacher</span>
+          <span class="seg" style="--a: 330deg">Captain</span>
+        </div>
+      </div>
+
+      <!-- portrait plane at z = 0, sandwiched between the ring halves -->
+      <div class="hero-photo">
+        <img src="images/home-1-cut.png" alt="Sean Hou with a camera" data-i18n-alt="alt-home" />
+      </div>
+
+      <!-- front halves (only camera-facing segments render) -->
+      <div class="ring ring-a is-front" aria-hidden="true">
+        <div class="ring-spin">
+          <span class="seg" style="--a: 0deg">SEAN HOU</span>
+          <span class="seg" style="--a: 30deg">SEAN HOU</span>
+          <span class="seg" style="--a: 60deg">SEAN HOU</span>
+          <span class="seg" style="--a: 90deg">SEAN HOU</span>
+          <span class="seg" style="--a: 120deg">SEAN HOU</span>
+          <span class="seg" style="--a: 150deg">SEAN HOU</span>
+          <span class="seg" style="--a: 180deg">SEAN HOU</span>
+          <span class="seg" style="--a: 210deg">SEAN HOU</span>
+          <span class="seg" style="--a: 240deg">SEAN HOU</span>
+          <span class="seg" style="--a: 270deg">SEAN HOU</span>
+          <span class="seg" style="--a: 300deg">SEAN HOU</span>
+          <span class="seg" style="--a: 330deg">SEAN HOU</span>
+        </div>
+      </div>
+
+      <div class="ring ring-b is-front" aria-hidden="true">
+        <div class="ring-spin">
+          <span class="seg" style="--a: 0deg">Photographer</span>
+          <span class="seg" style="--a: 30deg">Teacher</span>
+          <span class="seg" style="--a: 60deg">Captain</span>
+          <span class="seg" style="--a: 90deg">Photographer</span>
+          <span class="seg" style="--a: 120deg">Teacher</span>
+          <span class="seg" style="--a: 150deg">Captain</span>
+          <span class="seg" style="--a: 180deg">Photographer</span>
+          <span class="seg" style="--a: 210deg">Teacher</span>
+          <span class="seg" style="--a: 240deg">Captain</span>
+          <span class="seg" style="--a: 270deg">Photographer</span>
+          <span class="seg" style="--a: 300deg">Teacher</span>
+          <span class="seg" style="--a: 330deg">Captain</span>
+        </div>
+      </div>
     </div>
 
     <a class="scroll-hint" href="#about" aria-label="Scroll to About">
@@ -205,6 +269,147 @@
     <img class="car car-14" src="images/car-14.jpg" alt="GT3 14" loading="lazy" />
     <img class="car car-15" src="images/car-15.jpg" alt="GT3 15" loading="lazy" />
     <img class="car car-16" src="images/car-16.jpg" alt="GT3 16" loading="lazy" />
+  </section>
+
+  <!-- ============================================================
+       03b ASK ME ABOUT — what I can teach you (two full pages)
+       ============================================================ -->
+  <section class="section sec-ask" id="ask" data-theme="dark">
+
+    <div class="side-bar ask-bar"></div>
+    <h1 class="section-label" data-i18n="ask-label">ASK ME ABOUT</h1>
+    <span class="dash dash-1"></span>
+    <span class="dash dash-2"></span>
+    <h2 class="heading ask-heading" data-i18n="ask-heading">What I Can Teach</h2>
+
+    <!-- ==========================================================
+         PAGE 01 — PHOTOGRAPHY
+         ========================================================== -->
+    <div class="ask-page ask-page-photo">
+      <div class="ask-page-head">
+        <span class="ask-page-num">01</span>
+        <h3 class="ask-page-title" data-i18n="ask-photo-title">Photography</h3>
+        <span class="ask-page-tag" data-i18n="ask-photo-tag">City &amp; night photography</span>
+      </div>
+
+      <!-- hero image -->
+      <img class="ask-img ask-img-hero" src="images/ask-photo-street.png" alt="Photography teaching" data-i18n-alt="alt-ask-photo" />
+
+      <!-- text blocks, spread out with breathing room -->
+      <div class="ask-block ask-block-a">
+        <p class="teach-h" data-i18n="ask-who">Who it's for</p>
+        <p class="teach-p" data-i18n="ask-photo-who">People who always get bad shots and want to improve — anyone who wants to learn how to take good photos.</p>
+      </div>
+
+      <div class="ask-block ask-block-b">
+        <p class="teach-h" data-i18n="ask-do">What we'll do</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-photo-do1">Understand your camera — how aperture and depth of field work</li>
+          <li data-i18n="ask-photo-do2">Head out for a street or night shoot and learn composition &amp; finding good angles on the spot</li>
+          <li data-i18n="ask-photo-do3">Review your photos and tell you what works and what to change</li>
+          <li data-i18n="ask-photo-do4">Teach the basics of Photoshop: exposure, contrast, colour</li>
+        </ul>
+      </div>
+
+      <!-- extra image slot -->
+      <img class="ask-img ask-img-side" src="images/ask-photo-city.jpg" alt="Photography work sample" data-i18n-alt="alt-ask-photo" />
+
+      <div class="ask-block ask-block-c">
+        <p class="teach-h" data-i18n="ask-exp">My experience</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-photo-exp1">Shooting cityscapes for 1.5 years on a Nikon Z5 II</li>
+          <li data-i18n="ask-photo-exp2">Shot in Shanghai, Hong Kong and Chengdu — I know the best spots and times in each</li>
+          <li data-i18n="ask-photo-exp3">Long exposures, skylines, street scenes; editing in Photoshop</li>
+        </ul>
+      </div>
+
+      <div class="ask-block ask-block-d">
+        <p class="teach-h" data-i18n="ask-time">Time I can give</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-photo-time1">1–2 outdoor shoots a month (weekend dusk or dawn, weather permitting)</li>
+          <li data-i18n="ask-photo-time2">I can review your photos and answer questions online anytime</li>
+        </ul>
+      </div>
+
+      <div class="ask-block ask-block-e">
+        <p class="teach-h" data-i18n="ask-start">How to start</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-photo-start1">Tell me what camera you have and what you want to shoot</li>
+          <li data-i18n="ask-photo-start2">Start with "why isn't this photo good enough" — I'll review one of your photos</li>
+          <li data-i18n="ask-photo-start3">Book an outdoor shoot and learn on the spot</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         PAGE 02 — WAR THUNDER
+         ========================================================== -->
+    <div class="ask-page ask-page-war">
+      <div class="ask-page-head">
+        <span class="ask-page-num">02</span>
+        <h3 class="ask-page-title" data-i18n="ask-war-title">War Thunder</h3>
+        <span class="ask-page-tag" data-i18n="ask-war-tag">Game coaching</span>
+      </div>
+
+      <!-- stat badges — hard numbers, game-style -->
+      <div class="ask-stats">
+        <div class="stat">
+          <span class="stat-num" data-i18n="ask-war-stat1-num">Lv.100</span>
+          <span class="stat-label" data-i18n="ask-war-stat1-label">Player level</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-i18n="ask-war-stat2-num">700+</span>
+          <span class="stat-label" data-i18n="ask-war-stat2-label">Hours played</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" data-i18n="ask-war-stat3-num">3</span>
+          <span class="stat-label" data-i18n="ask-war-stat3-label">Nations maxed</span>
+        </div>
+      </div>
+
+      <img class="ask-img ask-img-hero" src="images/ask-war-card.jpg" alt="War Thunder ground forces coaching" data-i18n-alt="alt-ask-war" />
+
+      <div class="ask-block ask-block-a">
+        <p class="teach-h" data-i18n="ask-who">Who it's for</p>
+        <p class="teach-p" data-i18n="ask-war-who">New players who want to play but don't know where to start, or people who've played a while but keep getting destroyed and can't figure out how to improve.</p>
+      </div>
+
+      <div class="ask-block ask-block-b">
+        <p class="teach-h" data-i18n="ask-do">What we'll do</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-war-do1">Help you pick the first tank worth grinding — no wasted time</li>
+          <li data-i18n="ask-war-do2">Teach basic positioning: finding cover, when to push or hold, reading the minimap</li>
+          <li data-i18n="ask-war-do3">Core gunnery: angling, baiting tracks, where to shoot to penetrate — and play together</li>
+        </ul>
+      </div>
+
+      <img class="ask-img ask-img-side" src="images/ask-war-banner.png" alt="War Thunder gameplay" data-i18n-alt="alt-ask-war" />
+
+      <div class="ask-block ask-block-c">
+        <p class="teach-h" data-i18n="ask-exp">My experience</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-war-exp1">War Thunder level 100, 700+ hours of pure playtime</li>
+          <li data-i18n="ask-war-exp2">Top-tier ground &amp; air — China ground and air maxed, US ground maxed, USSR air maxed</li>
+          <li data-i18n="ask-war-exp3">Ground my way up from low tier, so I know every mechanic and where each stage trips people up</li>
+          <li data-i18n="ask-war-exp4">Vehicles I've spaded include the Khalid, T-80UE-1, Su-30 and more — familiar with every nation</li>
+        </ul>
+      </div>
+
+      <div class="ask-block ask-block-d">
+        <p class="teach-h" data-i18n="ask-time">Time I can give</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-war-time1">1–2 sessions a week, 2–3 hours each (weekends or evenings)</li>
+          <li data-i18n="ask-war-time2">We can play one match first to see your level, then decide where to start</li>
+        </ul>
+      </div>
+
+      <div class="ask-block ask-block-e">
+        <p class="teach-h" data-i18n="ask-start">How to start</p>
+        <ul class="teach-list">
+          <li data-i18n="ask-war-start1">Add me as a friend and tell me what you're playing now — let's play together</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- ============================================================
