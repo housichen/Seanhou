@@ -1,0 +1,456 @@
+/* ============================================================
+   DRIVE — F1 playground. Same DNA as the main site:
+   black stage, #ccff00 accent, italic type, liquid glass.
+   ============================================================ */
+:root {
+  --accent: #ccff00;
+  --black: #000;
+  --white: #fff;
+  --glass-bg: rgba(18, 20, 14, 0.42);
+  --glass-border: rgba(204, 255, 0, 0.28);
+  --glass-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--black);
+  font-family: "Avenir Next", "Futura", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+/* ---------- HUD: top bar ---------- */
+.hud-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 34px;
+  pointer-events: none;
+}
+
+.hud-top > * { pointer-events: auto; }
+
+.hud-back {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 17px;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.hud-back:hover { color: var(--accent); border-color: var(--accent); }
+
+.hud-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  user-select: none;
+  pointer-events: none !important;
+}
+
+.hud-title-main {
+  color: var(--accent);
+  font-size: 26px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-shadow: 0 0 24px rgba(204, 255, 0, 0.35);
+}
+
+.hud-title-sub {
+  color: var(--white);
+  font-size: 13px;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  opacity: 0.65;
+}
+
+.hud-lang {
+  color: var(--white);
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.hud-lang:hover { color: var(--accent); border-color: var(--accent); }
+
+.hud-top-right { display: flex; gap: 10px; align-items: center; }
+.hud-photo {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.hud-photo:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- HUD: speed ---------- */
+.hud-speed {
+  position: fixed;
+  left: 34px;
+  bottom: 30px;
+  z-index: 20;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 18px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  user-select: none;
+  pointer-events: none;
+}
+
+.hud-speed-num {
+  color: var(--accent);
+  font-size: 52px;
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1;
+  min-width: 96px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px rgba(204, 255, 0, 0.3);
+}
+
+.hud-speed-unit {
+  color: var(--white);
+  font-size: 16px;
+  font-style: italic;
+  opacity: 0.75;
+}
+
+/* ---------- HUD: hint ---------- */
+.hud-hint {
+  position: fixed;
+  right: 34px;
+  bottom: 36px;
+  z-index: 20;
+  color: var(--white);
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  opacity: 0.66;
+  user-select: none;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.hud-hint.is-dim { opacity: 0.22; }
+
+/* ---------- HUD: vehicle switcher ---------- */
+.hud-vehicles {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+}
+
+.veh-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.veh-btn kbd {
+  font-family: inherit;
+  font-size: 11px;
+  font-style: normal;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  opacity: 0.8;
+}
+.veh-btn:hover { opacity: 1; }
+.veh-btn.is-active {
+  opacity: 1;
+  color: var(--black);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.veh-btn.is-active kbd { border-color: rgba(0, 0, 0, 0.4); }
+
+/* flying state: the speed pill glows cyan */
+.hud-speed.is-fly {
+  border-color: rgba(102, 217, 255, 0.6);
+  box-shadow: 0 18px 50px rgba(0, 180, 255, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+.hud-speed.is-fly .hud-speed-num {
+  color: #8fdcff;
+  text-shadow: 0 0 18px rgba(102, 217, 255, 0.5);
+}
+
+/* ---------- HUD: current map ---------- */
+.hud-map {
+  position: fixed;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  color: var(--white);
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  user-select: none;
+  pointer-events: none;
+}
+.hud-map kbd {
+  font-family: inherit;
+  font-size: 10px;
+  font-style: normal;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  opacity: 0.6;
+}
+
+/* ---------- HUD: ring time trial ---------- */
+.hud-challenge {
+  position: fixed;
+  top: 96px;
+  right: 34px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 14px 20px;
+  border-radius: 18px;
+  background: var(--glass-bg);
+  border: 1px solid rgba(102, 217, 255, 0.35);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  user-select: none;
+  pointer-events: none;
+}
+.hud-challenge.is-hidden { display: none; }
+.ch-progress {
+  color: var(--white);
+  font-size: 12px;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  opacity: 0.8;
+}
+.ch-time {
+  color: #8fdcff;
+  font-size: 34px;
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px rgba(102, 217, 255, 0.4);
+}
+.ch-best {
+  color: var(--accent);
+  font-size: 12px;
+  font-style: italic;
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+
+/* ---------- HUD: centre toast ---------- */
+.hud-toast {
+  position: fixed;
+  top: 34%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  z-index: 22;
+  color: var(--accent);
+  font-size: 44px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+  white-space: pre-line;
+  line-height: 1.35;
+  text-shadow: 0 0 34px rgba(204, 255, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.hud-toast.is-show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ---------- touch controls ---------- */
+.touch-ui {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 25;
+  display: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 26px 26px;
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .touch-ui { display: flex; }
+  .hud-hint { display: none; }
+  .hud-speed { bottom: 150px; }
+  .hud-vehicles { bottom: 128px; }
+  .veh-btn kbd { display: none; }
+}
+
+.touch-left, .touch-right {
+  display: flex;
+  gap: 14px;
+  pointer-events: auto;
+}
+
+.tbtn {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--white);
+  font-size: 26px;
+  box-shadow: var(--glass-shadow);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tbtn:active, .tbtn.is-on {
+  color: var(--black);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.tbtn-gas { color: var(--accent); }
+.tbtn-gas:active, .tbtn-gas.is-on { color: var(--black); }
+
+/* ---------- loading veil ---------- */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--black);
+  transition: opacity 0.8s ease;
+}
+.veil.is-hidden { opacity: 0; pointer-events: none; }
+
+.veil-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.veil-logo {
+  color: var(--accent);
+  font-size: 42px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  animation: veilPulse 1.4s ease-in-out infinite;
+}
+
+.veil-text {
+  color: var(--white);
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.14em;
+  opacity: 0.6;
+}
+
+@keyframes veilPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (max-width: 720px) {
+  .hud-top { padding: 14px 16px; }
+  .hud-title-main { font-size: 18px; }
+  .hud-title-sub { display: none; }
+  .hud-speed { left: 16px; }
+  .hud-speed-num { font-size: 36px; min-width: 64px; }
+}

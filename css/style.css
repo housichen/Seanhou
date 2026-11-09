@@ -35,10 +35,12 @@
   --nx-project: 300px;
   --nx-ask: 438px;
   --nx-contact: 700px;
+  --nx-play: 856px;
   --sx-home: 168px;
   --sx-about: 297px;
   --sx-project: 433px;
   --sx-ask: 682px;
+  --sx-contact: 836px;
   --car-home: 50px;
   --car-about: 167px;
   --car-project: 292px;
@@ -117,10 +119,12 @@ body[data-theme="warm"] {
   --nx-project: 333px;
   --nx-ask: 471px;
   --nx-contact: 733px;
+  --nx-play: 889px;
   --sx-home: 201px;
   --sx-about: 330px;
   --sx-project: 466px;
   --sx-ask: 715px;
+  --sx-contact: 869px;
   --car-home: 83px;
   --car-about: 200px;
   --car-project: 325px;
@@ -137,6 +141,29 @@ body[data-active="about"]   { --car-x: var(--car-about); }
 body[data-active="project"] { --car-x: var(--car-project); }
 body[data-active="ask"]     { --car-x: var(--car-ask); }
 body[data-active="contact"] { --car-x: var(--car-contact); }
+
+/* Away from home, a translucent shelf keeps the fixed navigation
+   readable without hiding the photography beneath it. */
+.site-nav::before {
+  content: '';
+  position: absolute;
+  left: 62px;
+  right: 28px;
+  top: 54px;
+  height: 66px;
+  z-index: -1;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(7, 10, 8, 0.66);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+body:not([data-active="home"]) .site-nav::before { opacity: 1; }
 
 .nav-item {
   position: absolute;
@@ -162,6 +189,7 @@ body[data-active="contact"] { --car-x: var(--car-contact); }
 .nav-about-link   { left: var(--nx-about);   width: 100px; }
 .nav-project-link { left: var(--nx-project); width: 127px; }
 .nav-ask-link     { left: var(--nx-ask);     width: 250px; }
+.nav-play-link    { left: var(--nx-play);    width: 190px; }
 .nav-contact-link { left: var(--nx-contact); width: 126px; }
 
 .nav-sep {
@@ -180,6 +208,7 @@ body[data-active="contact"] { --car-x: var(--car-contact); }
 .sep-about   { left: var(--sx-about); }
 .sep-project { left: var(--sx-project); }
 .sep-ask     { left: var(--sx-ask); }
+.sep-contact { left: var(--sx-contact); }
 
 .nav-car {
   position: absolute;
@@ -236,7 +265,8 @@ body[data-theme="light"] .nav-car {
 }
 
 .sec-about {
-  min-height: 2750px;
+  min-height: 0;
+  padding-bottom: 180px;
 }
 
 .sec-project {
@@ -244,7 +274,8 @@ body[data-theme="light"] .nav-car {
 }
 
 .sec-ask {
-  min-height: 3000px;
+  min-height: 0;
+  padding-bottom: 150px;
 }
 
 .sec-contact {
@@ -262,6 +293,137 @@ body[data-theme="light"] .nav-car {
   pointer-events: none;
   z-index: 1;
   background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ============================================================
+   Home continuity — the actual photo wall and type rings carry
+   into every later section. JS fades the scene in as its section
+   enters, so the homepage visually becomes the site background.
+   ============================================================ */
+.ambient-rings {
+  --ring-alpha: 0.22;
+  --wall-alpha: 0.16;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: clip;
+  pointer-events: none;
+  opacity: var(--scene-visibility, 0);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 18%, rgba(0,0,0,0.82) 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center, #000 18%, rgba(0,0,0,0.82) 62%, transparent 100%);
+}
+
+.ambient-orbit {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 720px;
+  perspective: 2200px;
+  perspective-origin: 50% 48%;
+  transform-style: preserve-3d;
+  transform: translate3d(0, var(--scene-shift, 0px), 0);
+}
+
+.ambient-rings .ambient-wall {
+  z-index: 0;
+  background: transparent;
+  animation: none;
+  opacity: var(--wall-alpha);
+  filter: saturate(0.52) brightness(0.68);
+}
+
+.ambient-rings .ring {
+  top: 53%;
+  left: 55%;
+  z-index: 1;
+  opacity: var(--ring-alpha);
+  filter: saturate(0.42) brightness(0.8);
+}
+
+.ambient-rings .ring-a {
+  transform: translate(-50%, -50%) rotateX(-20deg) rotateZ(14deg) scale(1.24);
+}
+
+.ambient-rings .ring-b {
+  transform: translate(-50%, -50%) rotateX(-22deg) rotateZ(-14deg) scale(1.12);
+}
+
+.ambient-rings .seg { text-shadow: none; }
+
+.sec-project .ambient-rings { --ring-alpha: 0.15; --wall-alpha: 0.09; }
+.sec-contact .ambient-rings { --ring-alpha: 0.17; --wall-alpha: 0.12; }
+
+/* ============================================================
+   Ring-to-road journey — one continuous, scroll-driven racing line
+   ============================================================ */
+.track-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.64;
+}
+
+.track-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.track-svg path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.track-shoulder { stroke: rgba(0,0,0,0.82); stroke-width: 88; }
+.track-edge { stroke: rgba(204,255,0,0.52); stroke-width: 76; }
+.track-asphalt { stroke: rgba(13,17,15,0.94); stroke-width: 65; }
+.track-center {
+  stroke: rgba(255,255,255,0.34);
+  stroke-width: 2;
+  stroke-dasharray: 18 24;
+}
+
+.journey-car {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  /* top-down sprite: scaled against the 65px asphalt, not a 170px toy */
+  width: 48px;
+  height: auto;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 0 4px rgba(204,255,0,0.9))
+          drop-shadow(0 2px 4px rgba(0,0,0,0.85));
+  will-change: left, top, transform;
+}
+
+.home-track { z-index: 4; opacity: var(--track-reveal, 0); }
+.ambient-rings .ring { opacity: calc(var(--ring-alpha) * var(--ring-remain, 1)); }
+
+/* The original rings flatten and open as the road arrives. */
+.sec-home .stage3d .ring-a {
+  transform: translate(-50%, -50%)
+    rotateX(calc(-13deg - var(--morph, 0) * 62deg))
+    rotateZ(calc(11deg - var(--morph, 0) * 11deg))
+    scaleY(calc(1 - var(--morph, 0) * 0.72));
+}
+
+.sec-home .stage3d .ring-b {
+  transform: translate(-50%, -50%)
+    rotateX(calc(-17deg - var(--morph, 0) * 58deg))
+    rotateZ(calc(-11deg + var(--morph, 0) * 11deg))
+    scaleY(calc(1 - var(--morph, 0) * 0.72));
+}
+
+.sec-home .stage3d .ring { opacity: calc(1 - var(--morph, 0) * 1.25); }
+.sec-home .hero-photo img { opacity: calc(1 - var(--morph, 0) * 1.35); }
+
+@media (prefers-reduced-motion: reduce) {
+  .track-layer { display: none; }
 }
 
 /* ============================================================
@@ -535,6 +697,48 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
 
 .scroll-hint.is-hidden { opacity: 0; pointer-events: none; }
 
+/* Drive entry — glass pill on the home hero, fades away with the scroll cue */
+.drive-cta {
+  position: fixed;
+  left: 44px;
+  bottom: 30px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  color: var(--accent);
+  font-size: 19px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  transition: opacity 0.35s ease, transform 0.25s ease, border-color 0.25s ease;
+  animation: hintIn 0.8s ease 1.7s backwards;
+}
+.drive-cta:hover { transform: translateY(-2px); border-color: var(--accent); }
+.drive-cta.is-hidden { opacity: 0; pointer-events: none; }
+.drive-cta-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(204, 255, 0, 0.9);
+  animation: ctaPulse 1.6s ease-in-out infinite;
+}
+.drive-cta-arrow { transition: transform 0.25s ease; }
+.drive-cta:hover .drive-cta-arrow { transform: translateX(4px); }
+@keyframes ctaPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
 @keyframes hintIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -652,147 +856,154 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
   box-shadow: var(--glass-shadow);
 }
 
+/* ABOUT — normal-flow editorial rows with generous separation */
+.about-roles {
+  width: 1160px;
+  margin-left: 152px;
+  padding-top: 520px;
+  display: grid;
+  gap: 118px;
+}
+
+.about-role {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-areas:
+    "role role"
+    "bio photo"
+    "divider divider";
+  column-gap: 72px;
+  row-gap: 34px;
+  align-items: start;
+}
+
+.about-role-3 {
+  grid-template-areas: "role role" "bio photo";
+  padding-bottom: 30px;
+}
+
 .role {
-  position: absolute;
-  font-size: 64px;
+  grid-area: role;
+  justify-self: start;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  max-width: 100%;
+  padding: 16px 28px 18px;
+  font-size: 58px;
   font-style: italic;
   font-weight: 500;
-  display: inline-block;
-  padding: 10px 28px 14px;
+  line-height: 1.1;
   background: var(--glass-bg);
-  backdrop-filter: blur(44px) saturate(2.2);
-  -webkit-backdrop-filter: blur(44px) saturate(2.2);
+  backdrop-filter: blur(44px) saturate(1.35);
+  -webkit-backdrop-filter: blur(44px) saturate(1.35);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   box-shadow: var(--glass-shadow);
 }
 
-.role-1 { left: 154px; top: 506px; }
-.role-2 { left: 152px; top: 1211px; }
-.role-3 { left: 154px; top: 2028px; }
-
-.role-num   { color: var(--accent); }
-.role-gap   { color: var(--black); }
+.role-num { color: var(--accent); font-size: 42px; }
 .role-title { color: var(--white); }
 .role-title-warm { color: #fff5f5; }
 
 .bio {
-  position: absolute;
-  color: var(--white);
-  font-size: 34px;
-  font-style: italic;
+  grid-area: bio;
+  min-width: 0;
+  margin: 0;
+  padding: 34px 38px;
+  color: rgba(255,255,255,0.94);
+  font-size: 29px;
+  font-style: normal;
   font-weight: 400;
-  line-height: 1.45;
-  word-wrap: break-word;
-  padding: 26px 32px;
+  line-height: 1.65;
+  overflow-wrap: break-word;
   background: var(--glass-bg);
-  backdrop-filter: blur(44px) saturate(2.2);
-  -webkit-backdrop-filter: blur(44px) saturate(2.2);
+  backdrop-filter: blur(44px) saturate(1.35);
+  -webkit-backdrop-filter: blur(44px) saturate(1.35);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: var(--glass-shadow);
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-.bio-1 { width: 658px; left: 152px; top: 713px; }
-.bio-2 { width: 632px; left: 154px; top: 1400px; }
-.bio-3 { width: 651px; left: 154px; top: 2235px; }
+html[lang="zh"] .bio { line-height: 1.8; }
 
 .divider {
-  position: absolute;
-  width: 1199.01px;
-  height: 0;
-  outline: 10px solid var(--accent);
-  outline-offset: -5px;
+  grid-area: divider;
+  width: 100%;
+  height: 3px;
+  margin-top: 42px;
+  background: var(--accent);
+  box-shadow: 0 0 18px rgba(204,255,0,0.16);
 }
-
-.divider-1 { left: 152px; top: 1206px; }
-.divider-2 { left: 152px; top: 2008px; }
 
 .photo {
-  position: absolute;
-  object-fit: cover;
+  grid-area: photo;
+  justify-self: end;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border: 2px solid var(--accent);
+  box-shadow: 14px 16px 0 rgba(204,255,0,0.08), 0 20px 48px rgba(0,0,0,0.28);
 }
 
-.photo-1 {
-  width: 528px;
-  height: 685px;
-  left: 828px;
-  top: 325px;
-  box-shadow: 17px 14px 4px rgba(0, 0, 0, 0.25);
-  border: 3px solid var(--accent);
-}
-
-.photo-2 {
-  width: 644px;
-  height: 428px;
-  left: 796px;
-  top: 1288px;
-  box-shadow: 11px 19px 4px rgba(0, 0, 0, 0.25);
-}
-
-.photo-3 {
-  width: 533px;
-  height: 800px;
-  left: 823px;
-  top: 2090px;
-  box-shadow: 16px 14px 4px rgba(0, 0, 0, 0.25);
-  border: 3px solid var(--accent);
-}
+.photo-1 { max-width: 480px; }
+.photo-2 { max-width: 560px; align-self: center; }
+.photo-3 { max-width: 460px; }
 
 /* ============================================================
-   ASK ME ABOUT — what I can teach (two full pages)
+   ASK ME ABOUT — concise editorial cards, no floated text
    ============================================================ */
-.ask-bar {
-  top: 158px;
-}
+.ask-bar { top: 158px; }
 
 .ask-heading {
   top: 288px;
   width: auto;
 }
 
-/* ---- each topic is a full page, laid out as a loose grid ----
-   aligned to the section content column (left 152px), clear of the
-   side accent bar */
 .ask-page {
   position: relative;
   width: 1160px;
-  margin: 0 0 0 152px;
-  padding-top: 520px;
+  margin-left: 152px;
+  padding-top: 500px;
+  display: grid;
+  column-gap: 42px;
+  row-gap: 44px;
+  align-items: start;
+}
+
+.ask-page-photo {
+  grid-template-columns: 400px minmax(0, 1fr);
+  grid-template-areas:
+    "head head"
+    "hero lesson"
+    "details side";
 }
 
 .ask-page-war {
-  padding-top: 80px;
-  margin-bottom: 160px;
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 48px;
+  padding-top: 140px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  grid-template-areas:
+    "head head"
+    "stats stats"
+    "hero lesson"
+    "side side"
+    "experience next";
 }
 
-/* war thunder page: header + stats span full width, blocks go two-up */
-.ask-page-war .ask-page-head,
-.ask-page-war .ask-stats {
-  width: 100%;
-}
-
-/* two-column text blocks on the war thunder page */
-.ask-page-war .ask-block {
-  flex: 1 1 520px;
-  margin-bottom: 28px;
-}
-
-/* page header: number + title + tag, spans full width */
 .ask-page-head {
+  grid-area: head;
   display: flex;
   align-items: baseline;
-  gap: 22px;
-  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(204, 255, 0, 0.28);
 }
 
 .ask-page-num {
   color: var(--accent);
-  font-size: 56px;
+  font-size: 48px;
   font-style: italic;
   font-weight: 700;
   line-height: 1;
@@ -800,143 +1011,102 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
 
 .ask-page-title {
   color: var(--white);
-  font-size: 84px;
+  font-size: 76px;
   font-style: italic;
   font-weight: 500;
   line-height: 1;
 }
 
 .ask-page-tag {
+  margin-left: auto;
   color: var(--accent);
-  font-size: 24px;
-  font-style: italic;
-  font-weight: 400;
-  margin-left: 8px;
-  opacity: 0.9;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  opacity: 0.82;
 }
 
-/* images — compact, floated beside text */
-.ask-img-hero,
-.ask-img-side {
-  float: left;
-  width: 320px;
-  height: 240px;
-  object-fit: cover;
-  border-radius: 14px;
-  border: 3px solid var(--accent);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.ask-img-hero { margin: 0 32px 20px 0; }
-.ask-img-side { margin: 0 32px 20px 0; }
-
-/* ---- PAGE 01 (Photography): portrait images, float LEFT ---- */
-.ask-page-photo .ask-img-hero,
-.ask-page-photo .ask-img-side {
-  float: left;
-  width: 360px;
-  height: 500px;
-  margin: 0 40px 24px 0;
-}
-
-/* street shot — 968×1278 ≈ 0.76 */
-.ask-page-photo .ask-img-hero {
-  height: 470px;
-}
-/* city/tripod shot — 1872×4160 ≈ 0.45 (very tall) */
-.ask-page-photo .ask-img-side {
-  height: 560px;
-}
-
-/* ---- PAGE 02 (War Thunder): landscape images, centered, native ratio ---- */
-.ask-page-war .ask-img-hero,
-.ask-page-war .ask-img-side {
-  flex: 0 0 100%;
-  object-fit: cover;
-  object-position: center;
-  margin: 0 auto 28px;
-  display: block;
-}
-
-.ask-page-war .ask-img-hero {
-  /* player card — 902×746 ≈ 1.21 */
-  max-width: 680px;
+.ask-img {
   width: 100%;
-  height: 560px;
-}
-.ask-page-war .ask-img-side {
-  /* stat banner — 782×364 ≈ 2.15 */
-  max-width: 860px;
-  width: 100%;
-  height: 400px;
-}
-
-/* stat badges — a bold strip of hard numbers, only on the War Thunder page */
-.ask-stats {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 36px;
-}
-
-.ask-stats .stat {
-  flex: 1;
-  padding: 22px 28px;
+  height: auto;
+  margin: 0;
+  object-fit: contain;
   border-radius: 16px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
+  border: 2px solid rgba(204, 255, 0, 0.66);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ask-img-hero { grid-area: hero; }
+.ask-img-side { grid-area: side; }
+.ask-block-lesson { grid-area: lesson; }
+.ask-block-experience { grid-area: experience; }
+.ask-block-next { grid-area: next; }
+.ask-page-photo .ask-block-details { grid-area: details; }
+
+/* Photography: both images keep their native aspect ratio. */
+.ask-page-photo .ask-img-side { align-self: start; }
+
+/* War Thunder: the banner becomes a deliberate full-width pause. */
+.ask-page-war .ask-img-side {
+  width: 100%;
+  max-width: 960px;
+  justify-self: center;
+}
+
+.ask-block {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  padding: 34px 36px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.ask-stats .stat-num {
-  color: var(--accent);
-  font-size: 46px;
-  font-style: italic;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.ask-stats .stat-label {
-  color: var(--white);
-  font-size: 18px;
-  font-style: italic;
-  font-weight: 400;
-  opacity: 0.85;
-}
-
-/* text blocks — liquid glass panels, full width */
-.ask-block {
-  padding: 30px 36px;
+  gap: 30px;
+  overflow: hidden;
   color: var(--white);
   background: var(--glass-bg);
-  backdrop-filter: blur(44px) saturate(2.2);
-  -webkit-backdrop-filter: blur(44px) saturate(2.2);
+  backdrop-filter: blur(44px) saturate(1.35);
+  -webkit-backdrop-filter: blur(44px) saturate(1.35);
   border: 1px solid var(--glass-border);
-  border-radius: 18px;
+  border-radius: 20px;
   box-shadow: var(--glass-shadow);
-  margin-bottom: 28px;
-  overflow: hidden;
+}
+
+.ask-block > * {
+  position: relative;
+  z-index: 2;
+}
+
+.ask-block-lesson { justify-content: center; }
+
+.ask-intro {
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.ask-block-details > * + *,
+.ask-block-next > * + * {
+  padding-top: 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .teach-h {
+  margin: 0 0 12px;
   color: var(--accent);
-  font-size: 22px;
-  font-style: italic;
+  font-size: 17px;
+  font-style: normal;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 1.8px;
+  line-height: 1.4;
   text-transform: uppercase;
-  margin-bottom: 14px;
 }
 
 .teach-p {
-  color: var(--white);
-  font-size: 27px;
-  font-style: italic;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 22px;
+  font-style: normal;
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.6;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
@@ -948,30 +1118,68 @@ body[data-theme="dark"] .mouse { border-color: #fff; }
 
 .teach-list li {
   position: relative;
-  color: var(--white);
-  font-size: 25px;
-  font-style: italic;
+  margin-bottom: 12px;
+  padding-left: 23px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 21px;
+  font-style: normal;
   font-weight: 400;
   line-height: 1.55;
-  padding-left: 30px;
-  margin-bottom: 14px;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-.teach-list li:last-child {
-  margin-bottom: 0;
-}
+.teach-list li:last-child { margin-bottom: 0; }
 
 .teach-list li::before {
   content: '';
   position: absolute;
-  left: 6px;
+  left: 3px;
   top: 13px;
-  width: 9px;
-  height: 9px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--accent);
+  box-shadow: 0 0 10px rgba(204, 255, 0, 0.35);
 }
+
+.ask-stats {
+  grid-area: stats;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.ask-stats .stat {
+  min-width: 0;
+  padding: 22px 26px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ask-stats .stat-num {
+  color: var(--accent);
+  font-size: 42px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ask-stats .stat-label {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+html[lang="zh"] .teach-h { letter-spacing: 1px; }
+html[lang="zh"] .teach-p,
+html[lang="zh"] .teach-list li { line-height: 1.7; }
 
 /* ============================================================
    PROJECT — PHOTOGRAPHY

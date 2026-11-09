@@ -1,0 +1,507 @@
+/* ============================================================
+   PHOTO WALK — camera simulator. Same DNA: black, #ccff00,
+   italic type, liquid glass. The 3D scenes go for golden-hour
+   realism; the UI stays dark and quiet like a camera shell.
+   ============================================================ */
+:root {
+  --accent: #ccff00;
+  --black: #000;
+  --white: #fff;
+  --glass-bg: rgba(14, 14, 12, 0.55);
+  --glass-border: rgba(204, 255, 0, 0.28);
+  --glass-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--black);
+  font-family: "Avenir Next", "Futura", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+#scene.dragging { cursor: grabbing; }
+
+/* ISO grain overlay (opacity driven from JS) */
+.grain {
+  position: fixed;
+  inset: -100px;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* shutter flash */
+.flash {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+.flash.pop { animation: flashPop 0.35s ease-out; }
+@keyframes flashPop {
+  0% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* ---------- top bar ---------- */
+.hud-top {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 34px;
+  pointer-events: none;
+}
+.hud-top > * { pointer-events: auto; }
+
+.hud-back, .hud-btn {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.hud-back:hover, .hud-btn:hover { color: var(--accent); border-color: var(--accent); }
+.hud-back { font-size: 17px; }
+
+.hud-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  user-select: none;
+  pointer-events: none !important;
+}
+.hud-title-main {
+  color: var(--accent);
+  font-size: 26px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-shadow: 0 0 24px rgba(204, 255, 0, 0.35);
+}
+.hud-title-sub {
+  color: var(--white);
+  font-size: 13px;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  opacity: 0.65;
+}
+
+.hud-top-right { display: flex; gap: 10px; align-items: center; }
+.badge {
+  display: inline-block;
+  min-width: 20px;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--black);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* ---------- exposure readout ---------- */
+.hud-expo {
+  position: fixed;
+  top: 96px;
+  right: 34px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  user-select: none;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.expo-settings {
+  color: var(--white);
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.1em;
+}
+.expo-ev { font-size: 20px; font-style: italic; font-weight: 800; }
+.expo-ev.ok { color: var(--accent); }
+.expo-ev.over { color: #ff5f45; }
+.expo-ev.under { color: #66d9ff; }
+
+/* ---------- control deck ---------- */
+.deck {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 14px 18px;
+  border-radius: 22px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+}
+.deck-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.deck-label {
+  color: var(--white);
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  opacity: 0.55;
+  min-width: 46px;
+}
+.deck-btn {
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.deck-btn:hover { opacity: 1; }
+.deck-btn.is-active {
+  opacity: 1;
+  color: var(--black);
+  background: var(--accent);
+}
+
+.sliders { gap: 16px; }
+.slider-box { display: flex; align-items: center; gap: 8px; }
+.slider-box .deck-label { min-width: 26px; }
+.slider-val {
+  color: var(--accent);
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 700;
+  min-width: 52px;
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 110px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(204, 255, 0, 0.5);
+}
+
+/* ---------- shutter button ---------- */
+.shutter {
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  z-index: 21;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  background: radial-gradient(circle at 35% 35%, #3a3a32, #101010 70%);
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(204, 255, 0, 0.35), var(--glass-shadow);
+  transition: transform 0.12s ease;
+}
+.shutter:active { transform: scale(0.9); }
+.shutter::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(204, 255, 0, 0.5);
+}
+
+/* ---------- hint ---------- */
+.hud-hint {
+  position: fixed;
+  left: 34px;
+  bottom: 36px;
+  z-index: 20;
+  color: var(--white);
+  font-size: 13px;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  user-select: none;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+.hud-hint.is-dim { opacity: 0.2; }
+
+/* ---------- gallery ---------- */
+.gallery {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(420px, 92vw);
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  background: rgba(8, 8, 7, 0.82);
+  border-left: 1px solid var(--glass-border);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  transform: translateX(105%);
+  transition: transform 0.35s ease;
+}
+.gallery.is-open { transform: translateX(0); }
+.gallery-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--accent);
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  overflow-y: auto;
+}
+.gallery-grid img {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.gallery-grid img:hover { transform: scale(1.03); border-color: var(--accent); }
+.gallery-empty {
+  color: var(--white);
+  font-size: 13px;
+  font-style: italic;
+  opacity: 0.5;
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* ---------- lightbox ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 32;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(0, 0, 0, 0.88);
+}
+.lightbox.is-open { display: flex; }
+.lightbox img {
+  max-width: 88vw;
+  max-height: 78vh;
+  border-radius: 12px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
+}
+.lightbox-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--white);
+  font-size: 13px;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+/* ---------- veil ---------- */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--black);
+  transition: opacity 0.8s ease;
+}
+.veil.is-hidden { opacity: 0; pointer-events: none; }
+.veil-inner { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.veil-logo {
+  color: var(--accent);
+  font-size: 42px;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  animation: veilPulse 1.4s ease-in-out infinite;
+}
+.veil-text {
+  color: var(--white);
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.14em;
+  opacity: 0.6;
+}
+@keyframes veilPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (max-width: 900px) {
+  .hud-top { padding: 14px 16px; }
+  .hud-title-main { font-size: 18px; }
+  .hud-title-sub { display: none; }
+  .hud-expo { top: 76px; right: 16px; padding: 8px 12px; }
+  .expo-ev { font-size: 16px; }
+  .deck { bottom: 12px; padding: 10px 12px; max-width: 96vw; }
+  input[type="range"] { width: 70px; }
+  .hud-hint { display: none; }
+  .shutter { right: 18px; bottom: 120px; }
+}
+
+/* ----------------------------------------------------------
+   Viewfinder overlay — shown in EVF mode (key V)
+   ---------------------------------------------------------- */
+.viewfinder {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.viewfinder.is-on { opacity: 1; }
+
+/* rounded EVF vignette — a solid black eyepiece frame + soft falloff */
+.vf-frame {
+  position: absolute;
+  inset: 0;
+  border-radius: 52px;
+  border: 34px solid rgba(2, 2, 2, 0.98);
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.9),
+    inset 0 0 60px 20px rgba(0, 0, 0, 0.75),
+    inset 0 0 160px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* corner brackets */
+.vf-corner {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgba(204, 255, 0, 0.55);
+}
+.vf-corner.tl { top: 9%; left: 8%; border-right: none; border-bottom: none; }
+.vf-corner.tr { top: 9%; right: 8%; border-left: none; border-bottom: none; }
+.vf-corner.bl { bottom: 11%; left: 8%; border-right: none; border-top: none; }
+.vf-corner.br { bottom: 11%; right: 8%; border-left: none; border-top: none; }
+
+/* center focus brackets */
+.vf-brackets {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 110px; height: 76px;
+  transform: translate(-50%, -50%);
+  border: 1.5px solid rgba(204, 255, 0, 0.7);
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(204, 255, 0, 0.18);
+}
+.vf-brackets::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 6px; height: 6px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(204, 255, 0, 0.8);
+}
+
+/* bottom EVF readout strip */
+.vf-info {
+  position: absolute;
+  left: 50%;
+  bottom: 3.6%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-shadow: 0 0 14px rgba(204, 255, 0, 0.45);
+  white-space: nowrap;
+}
+
+/* tiny "press V to exit" glyph */
+.vf-exit {
+  position: absolute;
+  top: 3.4%;
+  right: 4.5%;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+/* in EVF mode the deck + exposure pill step out of the way */
+.vf-mode .deck,
+.vf-mode .hud-expo,
+.vf-mode .hud-hint {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+.deck, .hud-expo, .hud-hint { transition: opacity 0.22s ease; }

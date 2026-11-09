@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+  <title>Drive · Sean Hou</title>
+  <script>
+    // apply the saved language before first paint (shared with the main site)
+    try {
+      var savedLang = localStorage.getItem('lang') === 'zh' ? 'zh' : 'en';
+      document.documentElement.lang = savedLang;
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="css/drive.css" />
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <!-- HUD -->
+  <header class="hud-top">
+    <a class="hud-back" href="index.html" data-i18n="back">← Back</a>
+    <div class="hud-title">
+      <span class="hud-title-main" data-i18n="title">F1 PLAYGROUND</span>
+      <span class="hud-title-sub" data-i18n="subtitle">a tiny desk to drive on</span>
+    </div>
+    <div class="hud-top-right">
+      <a class="hud-photo" href="photo.html" data-i18n="photoLink">📷 PHOTO</a>
+      <button class="hud-lang" id="langBtn" type="button">EN / 中</button>
+    </div>
+  </header>
+
+  <div class="hud-speed">
+    <span class="hud-speed-num" id="speedNum">0</span>
+    <span class="hud-speed-unit">km/h</span>
+  </div>
+
+  <!-- current map (M cycles) -->
+  <div class="hud-map" id="hudMap"><span id="mapName">DESK CIRCUIT</span><kbd>M</kbd></div>
+
+  <!-- sky-ring time trial (only visible on the sky map) -->
+  <div class="hud-challenge is-hidden" id="hudChallenge">
+    <span class="ch-progress" id="chProgress"></span>
+    <span class="ch-time" id="chTime">0.0s</span>
+    <span class="ch-best" id="chBest"></span>
+  </div>
+
+  <!-- centre toast: GO! / FINISH · time -->
+  <div class="hud-toast" id="hudToast"></div>
+
+  <div class="hud-hint" data-i18n="hint">
+    W A S D / arrows to drive · Space drift · R reset · C camera
+  </div>
+
+  <!-- vehicle switcher -->
+  <div class="hud-vehicles" id="vehBar">
+    <button class="veh-btn is-active" data-veh="0" type="button"><kbd>1</kbd><span data-i18n="veh-f1">F1</span></button>
+    <button class="veh-btn" data-veh="1" type="button"><kbd>2</kbd><span data-i18n="veh-tesla">TESLA</span></button>
+    <button class="veh-btn" data-veh="2" type="button"><kbd>3</kbd><span data-i18n="veh-rally">RALLY</span></button>
+    <button class="veh-btn" data-veh="3" type="button"><kbd>4</kbd><span data-i18n="veh-truck">SEMI</span></button>
+  </div>
+
+  <!-- touch controls (shown on coarse pointers only) -->
+  <div class="touch-ui" id="touchUI" aria-hidden="true">
+    <div class="touch-left">
+      <button class="tbtn" id="tLeft" type="button">◀</button>
+      <button class="tbtn" id="tRight" type="button">▶</button>
+    </div>
+    <div class="touch-right">
+      <button class="tbtn" id="tFly" type="button">✦</button>
+      <button class="tbtn tbtn-brake" id="tBrake" type="button">▼</button>
+      <button class="tbtn tbtn-gas" id="tGas" type="button">▲</button>
+    </div>
+  </div>
+
+  <!-- loading veil -->
+  <div class="veil" id="veil">
+    <div class="veil-inner">
+      <span class="veil-logo">SEAN HOU</span>
+      <span class="veil-text" data-i18n="loading">warming up the engine…</span>
+    </div>
+  </div>
+
+  <!-- watchdog: if the module fails to load/start, say so instead of spinning forever -->
+  <script>
+    window.addEventListener('error', function (e) {
+      var t = document.querySelector('.veil-text');
+      if (t && !document.getElementById('veil').classList.contains('is-hidden')) {
+        t.textContent = 'Something went wrong — refresh the page / 出错了，请刷新页面';
+      }
+    }, true);
+    setTimeout(function () {
+      var v = document.getElementById('veil');
+      var t = document.querySelector('.veil-text');
+      if (v && t && !v.classList.contains('is-hidden') && !window.__car) {
+        t.textContent = 'Still loading… if nothing happens, refresh the page / 仍在加载，若无反应请刷新页面';
+      }
+    }, 9000);
+  </script>
+  <!-- bundled as a classic script (three.js inlined) so the page also runs
+       straight from disk via file:// — ES modules are blocked there -->
+  <script defer src="js/drive.bundle.js?v=9"></script>
+</body>
+</html>

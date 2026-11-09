@@ -46,10 +46,159 @@ document.addEventListener('DOMContentLoaded', () => {
     '(prefers-reduced-motion: reduce)'
   ).matches;
 
-  function updateHomeMotion() {
-    if (scrollHint) {
-      scrollHint.classList.toggle('is-hidden', window.scrollY > 300);
+  /* ---------- 1b. Ring-to-road journey ---------- */
+  const home = document.querySelector('.sec-home');
+  const homeStage = document.querySelector('.sec-home .stage3d');
+  const homeWall = document.querySelector('.sec-home .wall');
+  const homeRings = Array.from(document.querySelectorAll('.stage3d .ring:not(.is-front)'));
+  const continuityScenes = [];
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const clamp01 = (value) => Math.max(0, Math.min(1, value));
+
+  function createTrackLayer(extraClass) {
+    const layer = document.createElement('div');
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    const car = document.createElement('img');
+    layer.className = 'track-layer' + (extraClass ? ' ' + extraClass : '');
+    layer.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('class', 'track-svg');
+    svg.setAttribute('preserveAspectRatio', 'none');
+    const paths = ['track-shoulder', 'track-edge', 'track-asphalt', 'track-center'].map((cls) => {
+      const path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('class', cls);
+      svg.appendChild(path);
+      return path;
+    });
+    car.className = 'journey-car';
+    car.src = 'images/f1-top.svg';   // top-down car, nose pointing up
+    car.alt = '';
+    layer.append(svg, car);
+    return { layer, svg, paths, car };
+  }
+
+  function setTrackD(track, d) {
+    track.paths.forEach((path) => path.setAttribute('d', d));
+  }
+
+  const homeTrack = createTrackLayer('home-track');
+  if (home && homeStage) home.insertBefore(homeTrack.layer, homeStage);
+
+  document.querySelectorAll('.section:not(.sec-home)').forEach((section) => {
+    const ambient = document.createElement('div');
+    const orbit = document.createElement('div');
+    const track = createTrackLayer('');
+    ambient.className = 'ambient-rings';
+    ambient.setAttribute('aria-hidden', 'true');
+    orbit.className = 'ambient-orbit';
+
+    if (homeWall) {
+      const wall = homeWall.cloneNode(true);
+      wall.classList.add('ambient-wall');
+      orbit.appendChild(wall);
     }
+    homeRings.forEach((ring) => orbit.appendChild(ring.cloneNode(true)));
+    orbit.appendChild(track.layer);
+    ambient.appendChild(orbit);
+    section.prepend(ambient);
+    continuityScenes.push({ section, ambient, orbit, track });
+  });
+
+  function roadX(y) {
+    return 720 + 290 * Math.sin(y / 620) + 100 * Math.sin(y / 1400 + 0.8);
+  }
+
+  function roadDerivative(y) {
+    return (290 / 620) * Math.cos(y / 620) + (100 / 1400) * Math.cos(y / 1400 + 0.8);
+  }
+
+  function updateContinuity() {
+    const vh = window.innerHeight;
+    const y = window.scrollY;
+    const ringRemain = clamp01(1 - y / (vh * 1.35));
+    document.documentElement.style.setProperty('--ring-remain', ringRemain.toFixed(3));
+
+    let roadD = '';
+    let carX = 720;
+    let carY = vh * 0.62;
+    let carAngle = 90;
+    if (!reduceMotion) {
+      const points = [];
+      for (let sy = -140; sy <= vh + 220; sy += 42) {
+        points.push([roadX(y + sy), sy]);
+      }
+      roadD = points.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+      carX = roadX(y + carY);
+      carAngle = Math.atan2(1, roadDerivative(y + carY)) * 180 / Math.PI;
+    }
+
+    continuityScenes.forEach(({ section, ambient, orbit, track }) => {
+      const rect = section.getBoundingClientRect();
+      const entrance = clamp01((vh - rect.top) / (vh * 0.6));
+      ambient.style.setProperty('--scene-visibility', entrance.toFixed(3));
+      if (!reduceMotion) {
+        const progress = clamp01((vh - rect.top) / (rect.height + vh));
+        orbit.style.setProperty('--scene-shift', (32 - progress * 64).toFixed(1) + 'px');
+        track.svg.setAttribute('viewBox', '0 0 1440 ' + vh);
+        setTrackD(track, roadD);
+        track.car.style.left = carX.toFixed(1) + 'px';
+        track.car.style.top = carY.toFixed(1) + 'px';
+        track.car.style.transform = 'translate(-50%, -50%) rotate(' + (carAngle + 90).toFixed(2) + 'deg)';
+      }
+    });
+  }
+
+  function homeRoadD(width, height, progress) {
+    const cx = width * 0.5;
+    const cy = height * 0.58;
+    const rx = Math.min(width * 0.25, 360);
+    const ry = height * 0.2;
+    const initial = [
+      cx - rx, cy,
+      cx - rx, cy - ry * 0.55, cx - rx * 0.55, cy - ry, cx, cy - ry,
+      cx + rx * 0.55, cy - ry, cx + rx, cy - ry * 0.55, cx + rx, cy,
+      cx + rx, cy + ry * 0.55, cx + rx * 0.55, cy + ry, cx, cy + ry,
+      cx - rx * 0.55, cy + ry, cx - rx, cy + ry * 0.55, cx - rx, cy
+    ];
+    const final = [
+      cx, cy,
+      cx + 250, cy + 20, cx + 360, cy + 115, cx + 220, cy + 220,
+      cx + 80, cy + 325, cx - 275, cy + 225, cx - 325, cy + 390,
+      cx - 375, cy + 555, cx + 95, cy + 500, cx + 245, cy + 660,
+      cx + 395, cy + 820, cx - 45, cy + 880, cx - 95, cy + 1100
+    ];
+    const n = initial.map((value, i) => value + (final[i] - value) * progress);
+    return 'M' + n[0] + ' ' + n[1] +
+      ' C' + n.slice(2, 8).join(' ') +
+      ' C' + n.slice(8, 14).join(' ') +
+      ' C' + n.slice(14, 20).join(' ') +
+      ' C' + n.slice(20, 26).join(' ');
+  }
+
+  const driveCta = document.querySelector('.drive-cta');
+
+  function updateHomeMotion() {
+    if (scrollHint) scrollHint.classList.toggle('is-hidden', window.scrollY > 300);
+    if (driveCta) driveCta.classList.toggle('is-hidden', window.scrollY > 300);
+    if (!home) return;
+    const vh = window.innerHeight;
+    const progress = clamp01(window.scrollY / (vh * 0.82));
+    home.style.setProperty('--morph', progress.toFixed(3));
+    home.style.setProperty('--track-reveal', clamp01((progress - 0.06) / 0.38).toFixed(3));
+
+    const width = home.clientWidth;
+    const height = home.clientHeight;
+    homeTrack.svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+    const d = homeRoadD(width, height, progress);
+    setTrackD(homeTrack, d);
+    const length = homeTrack.paths[0].getTotalLength();
+    const distance = length * progress * 0.78;
+    const point = homeTrack.paths[0].getPointAtLength(distance);
+    const next = homeTrack.paths[0].getPointAtLength(Math.min(length, distance + 3));
+    const angle = Math.atan2(next.y - point.y, next.x - point.x) * 180 / Math.PI;
+    homeTrack.car.style.left = point.x + 'px';
+    homeTrack.car.style.top = point.y + 'px';
+    homeTrack.car.style.opacity = clamp01((progress - 0.12) / 0.24);
+    homeTrack.car.style.transform = 'translate(-50%, -50%) rotate(' + (angle + 90).toFixed(2) + 'deg)';
   }
 
   window.addEventListener(
@@ -59,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ticking = true;
         requestAnimationFrame(() => {
           updateActive();
+          updateContinuity();
           if (!reduceMotion) updateHomeMotion();
         });
       }
@@ -66,9 +216,18 @@ document.addEventListener('DOMContentLoaded', () => {
     { passive: true }
   );
 
-  window.addEventListener('resize', updateActive);
-  window.addEventListener('load', updateActive);
+  window.addEventListener('resize', () => {
+    updateActive();
+    updateContinuity();
+    if (!reduceMotion) updateHomeMotion();
+  });
+  window.addEventListener('load', () => {
+    updateActive();
+    updateContinuity();
+    if (!reduceMotion) updateHomeMotion();
+  });
   updateActive();
+  updateContinuity();
   if (!reduceMotion) updateHomeMotion();
 
   // IntersectionObserver: fires reliably even after programmatic/hash jumps
@@ -343,11 +502,12 @@ document.addEventListener('DOMContentLoaded', () => {
     en: {
       'nav-home': 'Home', 'nav-about': 'About', 'nav-project': 'Project',
       'nav-ask': 'Ask me about', 'nav-contact': 'Contact', 'scroll': 'Scroll',
+      'nav-play': 'Playground', 'drive-cta': 'Drive the F1',
       'about-label': 'ABOUT ME', 'about-heading': 'Who I Am',
       'role-1': 'PHOTOGRAPHER', 'role-2': 'CAPTAIN', 'role-3': 'Teacher',
-      'bio-1': "I'm Sean Hou, a Grade 9 student based in Beijing. I'm a person who loves being behind the camera — not just taking photos, but actually walking through a city at sunrise, waiting for the right light, and trying to capture how a place feels.<br /><br /><br />",
-      'bio-2': "<br /><br />I'm also captain of my middle school flag football team. Being a captain has taught me more than just plays and strategies — it's taught me how to communicate, how to keep a team calm under pressure.<br />",
-      'bio-3': 'The project is to let us become a "teacher" and go to teach the kids in mountainous areas of Guizhou, and the kids are all stay-at-home children. I went to teach twice — the first time was in 2024, when my mom made me go, and the second time was in 2026, when I went because I wanted to.',
+      'bio-1': "I'm Sean Hou, a Grade 9 student based in Beijing. I love being behind the camera — walking through a city at sunrise, waiting for the right light, and capturing how a place feels.",
+      'bio-2': "I'm also captain of my middle school flag football team. It has taught me how to communicate, make decisions, and keep a team calm under pressure.",
+      'bio-3': 'I taught children in mountainous Guizhou in 2024 and returned in 2026 by choice. Teaching showed me how patience and encouragement can build confidence.',
       'p-title': 'Photography',
       'p-desc': 'We were exposed to photography during an ELP in Grade 7. <br />While completing this ELP, I fell in love with photography. So in the following year, I devoted a lot to this.',
       'p-works': 'My Works', 'p-cityscape': 'City Scape', 'p-cars': 'Cars',
@@ -360,30 +520,22 @@ document.addEventListener('DOMContentLoaded', () => {
       'ask-who': "Who it's for", 'ask-do': "What we'll do",
       'ask-exp': 'My experience', 'ask-time': 'Time I can give',
       'ask-start': 'How to start',
-      'ask-photo-who': "People who always get bad shots and want to improve — anyone who wants to learn how to take good photos.",
-      'ask-photo-do1': 'Understand your camera — how aperture and depth of field work',
-      'ask-photo-do2': 'Head out for a street or night shoot and learn composition &amp; finding good angles on the spot',
-      'ask-photo-do3': 'Review your photos and tell you what works and what to change',
-      'ask-photo-do4': 'Teach the basics of Photoshop: exposure, contrast, colour',
-      'ask-photo-exp1': 'Shooting cityscapes for 1.5 years on a Nikon Z5 II',
-      'ask-photo-exp2': 'Shot in Shanghai, Hong Kong and Chengdu — I know the best spots and times in each',
-      'ask-photo-exp3': 'Long exposures, skylines, street scenes; editing in Photoshop',
-      'ask-photo-time1': '1–2 outdoor shoots a month (weekend dusk or dawn, weather permitting)',
-      'ask-photo-time2': 'I can review your photos and answer questions online anytime',
-      'ask-photo-start1': 'Tell me what camera you have and what you want to shoot',
-      'ask-photo-start2': "Start with \"why isn't this photo good enough\" — I'll review one of your photos",
-      'ask-photo-start3': 'Book an outdoor shoot and learn on the spot',
-      'ask-war-who': "New players who want to play but don't know where to start, or people who've played a while but keep getting destroyed and can't figure out how to improve.",
-      'ask-war-do1': 'Help you pick the first tank worth grinding — no wasted time',
-      'ask-war-do2': 'Teach basic positioning: finding cover, when to push or hold, reading the minimap',
-      'ask-war-do3': 'Core gunnery: angling, baiting tracks, where to shoot to penetrate — and play together',
-      'ask-war-exp1': 'War Thunder level 100, 700+ hours of pure playtime',
-      'ask-war-exp2': 'Top-tier ground &amp; air — China ground and air maxed, US ground maxed, USSR air maxed',
-      'ask-war-exp3': 'Ground my way up from low tier, so I know every mechanic and where each stage trips people up',
-      'ask-war-exp4': "Vehicles I've spaded include the Khalid, T-80UE-1, Su-30 and more — familiar with every nation",
-      'ask-war-time1': '1–2 sessions a week, 2–3 hours each (weekends or evenings)',
-      'ask-war-time2': "We can play one match first to see your level, then decide where to start",
-      'ask-war-start1': "Add me as a friend and tell me what you're playing now — let's play together",
+      'ask-photo-who': 'Anyone who wants clearer, more thoughtful photos.',
+      'ask-photo-do1': 'Camera basics: aperture, depth of field and exposure',
+      'ask-photo-do2': 'A street or night shoot: composition and finding angles',
+      'ask-photo-do3': 'Photo review and simple Photoshop edits',
+      'ask-photo-exp1': '1.5 years of city photography with a Nikon Z5 II',
+      'ask-photo-exp2': 'Cities across China, including Shanghai and Hong Kong',
+      'ask-photo-time1': '1–2 outdoor shoots a month, plus online feedback.',
+      'ask-photo-start1': 'Send me a photo and tell me what you want to improve.',
+      'ask-war-who': 'New players, or anyone stuck and ready to improve.',
+      'ask-war-do1': 'Pick a vehicle and a sensible grind path',
+      'ask-war-do2': 'Positioning, cover and reading the minimap',
+      'ask-war-do3': 'Angling, aiming and playing matches together',
+      'ask-war-exp1': 'Top-tier ground and air across three maxed nations',
+      'ask-war-exp2': 'From low tier to top tier — familiar with each stage',
+      'ask-war-time1': '1–2 sessions a week, 2–3 hours each.',
+      'ask-war-start1': "Add me, tell me your lineup, and we'll play a match.",
       'ask-war-stat1-num': 'Lv.100', 'ask-war-stat1-label': 'Player level',
       'ask-war-stat2-num': '700+', 'ask-war-stat2-label': 'Hours played',
       'ask-war-stat3-num': '3', 'ask-war-stat3-label': 'Nations maxed',
@@ -401,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'alt-captain': 'Flag football player making a catch',
       'alt-teacher': 'Sean teaching in a Guizhou classroom',
       'alt-ask-photo': 'Photography teaching',
-      'alt-ask-war': 'War Thunder ground forces coaching',
+      'alt-ask-war': 'War Thunder game coaching',
       'alt-hero': 'Photography work',
       'alt-city-2': "Jing'an Temple at dusk",
       'alt-city-3': 'Oriental Pearl Tower close-up',
@@ -424,11 +576,12 @@ document.addEventListener('DOMContentLoaded', () => {
     zh: {
       'nav-home': '首页', 'nav-about': '关于', 'nav-project': '作品',
       'nav-ask': '来问我', 'nav-contact': '联系', 'scroll': '向下滚动',
+      'nav-play': '游乐场', 'drive-cta': '开 F1 兜风',
       'about-label': '关于我', 'about-heading': '我是谁',
       'role-1': '摄影师', 'role-2': '队长', 'role-3': '老师',
-      'bio-1': '我是 Sean Hou，一名在北京上学的九年级学生。我喜欢站在镜头后面——不只是按下快门，而是在日出时穿街走巷，等待最合适的那束光，试着捕捉一个地方给人的感觉。<br /><br /><br />',
-      'bio-2': '<br /><br />我还是学校腰旗橄榄球队的队长。当队长教会我的不只是战术与配合，还有如何沟通，如何让全队在压力下保持冷静。<br />',
-      'bio-3': '这个项目让我们变身成为“老师”，去贵州山区给孩子们上课，那些孩子大多是留守儿童。我去过两次：第一次是 2024 年，妈妈让我去的；第二次是 2026 年，这一次是我自己想去的。',
+      'bio-1': '我是 Sean Hou，一名在北京上学的九年级学生。我喜欢站在镜头后面，在日出时穿街走巷，等待合适的光线，记录一个地方给人的感觉。',
+      'bio-2': '我还是学校腰旗橄榄球队的队长。这段经历教会我如何沟通、做出判断，并带领全队在压力下保持冷静。',
+      'bio-3': '我在 2024 年到贵州山区支教，并在 2026 年主动再次前往。教学让我看到，耐心与鼓励如何帮助孩子们建立信心。',
       'p-title': '摄影',
       'p-desc': '七年级时，我们在一次 ELP 拓展学习中接触到了摄影。<br />在完成那次 ELP 的过程中，我爱上了摄影。于是接下来的一年，我为它投入了很多。',
       'p-works': '我的作品', 'p-cityscape': '城市风光', 'p-cars': '赛车',
@@ -441,30 +594,22 @@ document.addEventListener('DOMContentLoaded', () => {
       'ask-who': '适合谁', 'ask-do': '具体做什么',
       'ask-exp': '我的相关经历', 'ask-time': '我能投入多少时间',
       'ask-start': '怎么开始',
-      'ask-photo-who': '总是拍出烂片、想提升技术的人，或者想知道怎么拍出好看照片的人。',
-      'ask-photo-do1': '教你了解相机的功能，理解光圈和景深的关系',
-      'ask-photo-do2': '带你出去扫一次街或拍一次夜景，现场教你构图和找机位',
-      'ask-photo-do3': '帮你看你拍的照片，告诉你哪里好、哪里可以改',
-      'ask-photo-do4': '教你最基本的 Photoshop 后期：调曝光、对比度、颜色',
-      'ask-photo-exp1': '用 Nikon Z5 II 拍了 1 年半城市风光',
-      'ask-photo-exp2': '去过上海、香港、成都，知道几个城市的最佳机位和拍摄时间',
-      'ask-photo-exp3': '拍过长曝光、城市天际线、街景，后期用 Photoshop',
-      'ask-photo-time1': '每月 1–2 次外拍（周末傍晚或凌晨，看天气）',
-      'ask-photo-time2': '平时可以在线帮你看照片、回答问题',
-      'ask-photo-start1': '告诉我你有什么相机、想拍什么',
-      'ask-photo-start2': '先从“为什么你这张照片不够好”开始，我帮你看一张你拍的照片',
-      'ask-photo-start3': '约一次外拍，现场教',
-      'ask-war-who': '想玩但不知道怎么开始的新手，或者玩了一段时间但一直被虐、不知道怎么提升的玩家。',
-      'ask-war-do1': '帮你选第一辆值得花时间练的车，不走弯路',
-      'ask-war-do2': '教你基础走位：怎么找掩体、什么时候该冲什么时候该蹲、怎么看小地图',
-      'ask-war-do3': '讲最基本的对炮技巧：摆角度、卖履带、打什么位置能穿，带你打',
-      'ask-war-exp1': '战雷百级大将，纯游戏时长 700+',
-      'ask-war-exp2': '陆战/空战顶级玩家，中系空陆都到顶，美系陆顶，苏系空顶',
-      'ask-war-exp3': '从低级一路练上来的，对游戏的各个机制都有了解，知道每个阶段最容易犯什么错',
-      'ask-war-exp4': '开过线的车/飞机包括哈立德、T-80UE1、苏30等，对各系都很熟',
-      'ask-war-time1': '每周 1–2 次，每次 2–3 小时（周末或晚上）',
-      'ask-war-time2': '可以先打一局看你什么水平，再决定从哪开始教',
-      'ask-war-start1': '加我好友，告诉我你现在玩什么车，一起玩',
+      'ask-photo-who': '想提升构图、夜景拍摄和后期基础的摄影爱好者。',
+      'ask-photo-do1': '相机基础：光圈、景深与曝光',
+      'ask-photo-do2': '扫街或夜景实拍：构图与寻找机位',
+      'ask-photo-do3': '照片点评与 Photoshop 基础后期',
+      'ask-photo-exp1': '使用 Nikon Z5 II 拍摄城市风光 1 年半',
+      'ask-photo-exp2': '在中国上海、香港和成都等地拍摄',
+      'ask-photo-time1': '每月 1–2 次外拍，也可以在线点评照片。',
+      'ask-photo-start1': '发我一张照片，告诉我你最想改进的地方。',
+      'ask-war-who': '刚入坑的新手，或遇到瓶颈、想提升表现的玩家。',
+      'ask-war-do1': '选择载具，规划更合理的研发路线',
+      'ask-war-do2': '走位、掩体与小地图判断',
+      'ask-war-do3': '摆角度、瞄准弱区，并一起实战',
+      'ask-war-exp1': '三个系别满级，熟悉陆战与空战顶级房',
+      'ask-war-exp2': '从低级到顶级，熟悉各阶段常见问题',
+      'ask-war-time1': '每周 1–2 次，每次 2–3 小时。',
+      'ask-war-start1': '加我好友，告诉我你的队列，先一起打一局。',
       'ask-war-stat1-num': '百级', 'ask-war-stat1-label': '玩家等级',
       'ask-war-stat2-num': '700+', 'ask-war-stat2-label': '游戏时长',
       'ask-war-stat3-num': '3', 'ask-war-stat3-label': '满级系别',
@@ -482,7 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'alt-captain': '正在接球的腰旗橄榄球运动员',
       'alt-teacher': 'Sean 在贵州的教室里给孩子们上课',
       'alt-ask-photo': '摄影教学',
-      'alt-ask-war': '战争雷霆陆战指导',
+      'alt-ask-war': '战争雷霆游戏指导',
       'alt-hero': '摄影作品',
       'alt-city-2': '黄昏时分的静安寺',
       'alt-city-3': '东方明珠塔特写',
@@ -767,10 +912,10 @@ document.addEventListener('DOMContentLoaded', () => {
   navLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
       if (event.metaKey || event.ctrlKey || event.shiftKey) return;
-      event.preventDefault();
 
-      const target = document.getElementById(link.dataset.target);
-      if (!target) return;
+      const target = link.dataset.target && document.getElementById(link.dataset.target);
+      if (!target) return; // external link (e.g. Playground) — let the browser navigate
+      event.preventDefault();
 
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       history.replaceState(null, '', '#' + link.dataset.target);

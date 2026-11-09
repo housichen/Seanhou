@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+  <title>Photo · Sean Hou</title>
+  <script>
+    try {
+      var savedLang = localStorage.getItem('lang') === 'zh' ? 'zh' : 'en';
+      document.documentElement.lang = savedLang;
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="css/photo.css" />
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div class="grain" id="grain"></div>
+  <div class="flash" id="flash"></div>
+
+  <!-- viewfinder overlay (V toggles) -->
+  <div class="viewfinder" id="viewfinder">
+    <div class="vf-frame">
+      <span class="vf-corner tl"></span><span class="vf-corner tr"></span>
+      <span class="vf-corner bl"></span><span class="vf-corner br"></span>
+      <div class="vf-brackets"></div>
+      <div class="vf-info" id="vfInfo">1/250  F2.8  ISO400   ● +0.0</div>
+      <div class="vf-exit">V</div>
+    </div>
+  </div>
+
+  <!-- HUD top -->
+  <header class="hud-top">
+    <a class="hud-back" href="index.html" data-i18n="back">← Back</a>
+    <div class="hud-title">
+      <span class="hud-title-main" data-i18n="title">PHOTO WALK</span>
+      <span class="hud-title-sub" data-i18n="subtitle">a tiny camera simulator</span>
+    </div>
+    <div class="hud-top-right">
+      <button class="hud-btn" id="galleryBtn" type="button"><span data-i18n="gallery">PHOTOS</span><span class="badge" id="photoCount">0</span></button>
+      <button class="hud-btn" id="langBtn" type="button">EN / 中</button>
+    </div>
+  </header>
+
+  <!-- exposure readout -->
+  <div class="hud-expo">
+    <span class="expo-settings" id="expoSettings">f/2.8 · 1/250 · ISO400</span>
+    <span class="expo-ev" id="evMeter">EV +0.0</span>
+  </div>
+
+  <!-- control deck -->
+  <div class="deck">
+    <div class="deck-row" id="bodyBar">
+      <span class="deck-label" data-i18n="body">BODY</span>
+      <button class="deck-btn" data-body="0" type="button">M43</button>
+      <button class="deck-btn is-active" data-body="1" type="button">APS-C</button>
+      <button class="deck-btn" data-body="2" type="button">FF</button>
+    </div>
+    <div class="deck-row" id="lensBar">
+      <span class="deck-label" data-i18n="lens">LENS</span>
+      <button class="deck-btn" data-lens="0" type="button">16mm</button>
+      <button class="deck-btn" data-lens="1" type="button">24mm</button>
+      <button class="deck-btn is-active" data-lens="2" type="button">35mm</button>
+      <button class="deck-btn" data-lens="3" type="button">50mm</button>
+      <button class="deck-btn" data-lens="4" type="button">85mm</button>
+      <button class="deck-btn" data-lens="5" type="button">200mm</button>
+    </div>
+    <div class="deck-row sliders">
+      <label class="slider-box"><span class="deck-label">Av</span>
+        <input type="range" id="apRange" min="0" max="5" step="1" value="2" />
+        <span class="slider-val" id="apVal">f/2.8</span>
+      </label>
+      <label class="slider-box"><span class="deck-label">Tv</span>
+        <input type="range" id="tvRange" min="0" max="9" step="1" value="5" />
+        <span class="slider-val" id="tvVal">1/250</span>
+      </label>
+      <label class="slider-box"><span class="deck-label">ISO</span>
+        <input type="range" id="isoRange" min="0" max="6" step="1" value="2" />
+        <span class="slider-val" id="isoVal">400</span>
+      </label>
+    </div>
+    <div class="deck-row" id="sceneBar">
+      <span class="deck-label" data-i18n="scene">SCENE</span>
+      <button class="deck-btn is-active" data-scene="0" type="button" data-i18n="scene-lake">LAKE</button>
+      <button class="deck-btn" data-scene="1" type="button" data-i18n="scene-city">CITY</button>
+      <button class="deck-btn" data-scene="2" type="button" data-i18n="scene-forest">FOREST</button>
+    </div>
+  </div>
+
+  <!-- shutter -->
+  <button class="shutter" id="shutterBtn" type="button" aria-label="shoot"></button>
+
+  <div class="hud-hint" data-i18n="hint">
+    WASD move · drag to look · Q/E height · wheel stroll · Space shoot
+  </div>
+
+  <!-- gallery overlay -->
+  <div class="gallery" id="gallery">
+    <div class="gallery-head">
+      <span data-i18n="gallery">PHOTOS</span>
+      <button class="hud-btn" id="galleryClose" type="button">✕</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+    <div class="gallery-empty" id="galleryEmpty" data-i18n="empty">no photos yet — press Space to shoot</div>
+  </div>
+
+  <!-- lightbox -->
+  <div class="lightbox" id="lightbox">
+    <img id="lightboxImg" alt="photo" />
+    <div class="lightbox-bar">
+      <span id="lightboxMeta"></span>
+      <a class="hud-btn" id="lightboxDl" download="photo.jpg" data-i18n="download">DOWNLOAD</a>
+      <button class="hud-btn" id="lightboxClose" type="button">✕</button>
+    </div>
+  </div>
+
+  <!-- loading veil -->
+  <div class="veil" id="veil">
+    <div class="veil-inner">
+      <span class="veil-logo">SEAN HOU</span>
+      <span class="veil-text" data-i18n="loading">loading film…</span>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('error', function () {
+      var t = document.querySelector('.veil-text');
+      if (t && !document.getElementById('veil').classList.contains('is-hidden')) {
+        t.textContent = 'Something went wrong — refresh the page / 出错了，请刷新页面';
+      }
+    }, true);
+    setTimeout(function () {
+      var v = document.getElementById('veil');
+      var t = document.querySelector('.veil-text');
+      if (v && t && !v.classList.contains('is-hidden') && !window.__photo) {
+        t.textContent = 'Still loading… if nothing happens, refresh the page / 仍在加载，若无反应请刷新页面';
+      }
+    }, 9000);
+  </script>
+  <script defer src="js/photo.bundle.js?v=2"></script>
+</body>
+</html>

@@ -27,11 +27,13 @@
     <a class="nav-item nav-project-link" data-target="project" href="#project" data-i18n="nav-project">Project</a>
     <a class="nav-item nav-ask-link"     data-target="ask"     href="#ask" data-i18n="nav-ask">Ask me about</a>
     <a class="nav-item nav-contact-link" data-target="contact" href="#contact" data-i18n="nav-contact">Contact</a>
+    <a class="nav-item nav-play-link"    href="drive.html" data-i18n="nav-play">Playground</a>
 
     <span class="nav-sep sep-home"></span>
     <span class="nav-sep sep-about"></span>
     <span class="nav-sep sep-project"></span>
     <span class="nav-sep sep-ask"></span>
+    <span class="nav-sep sep-contact"></span>
   </header>
 
   <!-- ============================================================
@@ -146,6 +148,12 @@
       </div>
     </div>
 
+    <a class="drive-cta" href="drive.html">
+      <span class="drive-cta-dot" aria-hidden="true"></span>
+      <span data-i18n="drive-cta">Drive the F1</span>
+      <span class="drive-cta-arrow" aria-hidden="true">→</span>
+    </a>
+
     <a class="scroll-hint" href="#about" aria-label="Scroll to About">
       <span class="mouse"><i></i></span>
       <span class="scroll-word" data-i18n="scroll">Scroll</span>
@@ -163,44 +171,36 @@
     <span class="dash dash-2"></span>
     <h2 class="heading" data-i18n="about-heading">Who I Am</h2>
 
-    <!-- 01 Photographer -->
-    <div class="role role-1">
-      <span class="role-num">01</span><span class="role-gap"> <br /></span><span class="role-title" data-i18n="role-1">PHOTOGRAPHER</span>
+    <div class="about-roles">
+      <!-- 01 Photographer -->
+      <article class="about-role about-role-1">
+        <div class="role role-1">
+          <span class="role-num">01</span><span class="role-title" data-i18n="role-1">PHOTOGRAPHER</span>
+        </div>
+        <p class="bio bio-1" data-i18n-html="bio-1">I'm Sean Hou, a Grade 9 student based in Beijing. I love being behind the camera — walking through a city at sunrise, waiting for the right light, and capturing how a place feels.</p>
+        <img class="photo photo-1" src="images/about-camera.jpg" alt="Camera shooting the Shanghai skyline at night" data-i18n-alt="alt-camera" />
+        <div class="divider divider-1"></div>
+      </article>
+
+      <!-- 02 Captain -->
+      <article class="about-role about-role-2">
+        <div class="role role-2">
+          <span class="role-num">02</span><span class="role-title role-title-warm" data-i18n="role-2">CAPTAIN</span>
+        </div>
+        <p class="bio bio-2" data-i18n-html="bio-2">I'm also captain of my middle school flag football team. It has taught me how to communicate, make decisions, and keep a team calm under pressure.</p>
+        <img class="photo photo-2" src="images/captain.png" alt="Flag football player making a catch" loading="lazy" data-i18n-alt="alt-captain" />
+        <div class="divider divider-2"></div>
+      </article>
+
+      <!-- 03 Teacher -->
+      <article class="about-role about-role-3">
+        <div class="role role-3">
+          <span class="role-num">03</span><span class="role-title" data-i18n="role-3">Teacher</span>
+        </div>
+        <p class="bio bio-3" data-i18n-html="bio-3">I taught children in mountainous Guizhou in 2024 and returned in 2026 by choice. Teaching showed me how patience and encouragement can build confidence.</p>
+        <img class="photo photo-3" src="images/teacher.jpg" alt="Sean teaching in a Guizhou classroom" loading="lazy" data-i18n-alt="alt-teacher" />
+      </article>
     </div>
-    <p class="bio bio-1"
-      data-i18n-html="bio-1">I'm Sean Hou, a Grade 9 student based in Beijing. I'm a person who loves
-      being behind the camera — not just taking photos, but actually walking
-      through a city at sunrise, waiting for the right light, and trying to
-      capture how a place feels.<br /><br /><br />
-    </p>
-    <img class="photo photo-1" src="images/about-camera.jpg" alt="Camera shooting the Shanghai skyline at night" data-i18n-alt="alt-camera" />
-
-    <div class="divider divider-1"></div>
-
-    <!-- 02 Captain -->
-    <div class="role role-2">
-      <span class="role-num">02 <br /></span><span class="role-title role-title-warm" data-i18n="role-2">CAPTAIN</span>
-    </div>
-    <p class="bio bio-2" data-i18n-html="bio-2">
-      I'm also captain of my middle school flag football team. Being a
-      captain has taught me more than just plays and strategies — it's taught me
-      how to communicate, how to keep a team calm under pressure.<br />
-    </p>
-    <img class="photo photo-2" src="images/captain.png" alt="Flag football player making a catch" loading="lazy" data-i18n-alt="alt-captain" />
-
-    <div class="divider divider-2"></div>
-
-    <!-- 03 Teacher -->
-    <div class="role role-3">
-      <span class="role-num">03 <br /></span><span class="role-title" data-i18n="role-3">Teacher</span>
-    </div>
-    <p class="bio bio-3" data-i18n-html="bio-3">
-      The project is to let us become a "teacher"and go to teach the kids in
-      mountainous areas of Guizhou,and the kids are all stay-at-home children.I
-      went to teach for 2 time the first time is at 2024 my mom force me to go
-      and the 2 time is 2026 this time i went because my self
-    </p>
-    <img class="photo photo-3" src="images/teacher.jpg" alt="Sean teaching in a Guizhou classroom" loading="lazy" data-i18n-alt="alt-teacher" />
   </section>
 
   <!-- ============================================================
@@ -282,9 +282,7 @@
     <span class="dash dash-2"></span>
     <h2 class="heading ask-heading" data-i18n="ask-heading">What I Can Teach</h2>
 
-    <!-- ==========================================================
-         PAGE 01 — PHOTOGRAPHY
-         ========================================================== -->
+    <!-- PAGE 01 — PHOTOGRAPHY: alternating editorial grid -->
     <div class="ask-page ask-page-photo">
       <div class="ask-page-head">
         <span class="ask-page-num">01</span>
@@ -292,58 +290,45 @@
         <span class="ask-page-tag" data-i18n="ask-photo-tag">City &amp; night photography</span>
       </div>
 
-      <!-- hero image -->
       <img class="ask-img ask-img-hero" src="images/ask-photo-street.png" alt="Photography teaching" data-i18n-alt="alt-ask-photo" />
 
-      <!-- text blocks, spread out with breathing room -->
-      <div class="ask-block ask-block-a">
-        <p class="teach-h" data-i18n="ask-who">Who it's for</p>
-        <p class="teach-p" data-i18n="ask-photo-who">People who always get bad shots and want to improve — anyone who wants to learn how to take good photos.</p>
+      <div class="ask-block ask-block-lesson">
+        <div class="ask-intro">
+          <p class="teach-h" data-i18n="ask-who">Who it's for</p>
+          <p class="teach-p" data-i18n="ask-photo-who">Anyone who wants clearer, more thoughtful photos.</p>
+        </div>
+        <div class="ask-topics">
+          <p class="teach-h" data-i18n="ask-do">What we'll do</p>
+          <ul class="teach-list">
+            <li data-i18n="ask-photo-do1">Camera basics: aperture, depth of field and exposure</li>
+            <li data-i18n="ask-photo-do2">A street or night shoot: composition and finding angles</li>
+            <li data-i18n="ask-photo-do3">Photo review and simple Photoshop edits</li>
+          </ul>
+        </div>
       </div>
 
-      <div class="ask-block ask-block-b">
-        <p class="teach-h" data-i18n="ask-do">What we'll do</p>
-        <ul class="teach-list">
-          <li data-i18n="ask-photo-do1">Understand your camera — how aperture and depth of field work</li>
-          <li data-i18n="ask-photo-do2">Head out for a street or night shoot and learn composition &amp; finding good angles on the spot</li>
-          <li data-i18n="ask-photo-do3">Review your photos and tell you what works and what to change</li>
-          <li data-i18n="ask-photo-do4">Teach the basics of Photoshop: exposure, contrast, colour</li>
-        </ul>
+      <div class="ask-block ask-block-details">
+        <div>
+          <p class="teach-h" data-i18n="ask-exp">My experience</p>
+          <ul class="teach-list">
+            <li data-i18n="ask-photo-exp1">1.5 years of city photography with a Nikon Z5 II</li>
+            <li data-i18n="ask-photo-exp2">Cities across China, including Shanghai and Hong Kong</li>
+          </ul>
+        </div>
+        <div class="ask-practical">
+          <p class="teach-h" data-i18n="ask-time">Time I can give</p>
+          <p class="teach-p" data-i18n="ask-photo-time1">1–2 outdoor shoots a month, plus online feedback.</p>
+        </div>
+        <div class="ask-start">
+          <p class="teach-h" data-i18n="ask-start">How to start</p>
+          <p class="teach-p" data-i18n="ask-photo-start1">Send me a photo and tell me what you want to improve.</p>
+        </div>
       </div>
 
-      <!-- extra image slot -->
       <img class="ask-img ask-img-side" src="images/ask-photo-city.jpg" alt="Photography work sample" data-i18n-alt="alt-ask-photo" />
-
-      <div class="ask-block ask-block-c">
-        <p class="teach-h" data-i18n="ask-exp">My experience</p>
-        <ul class="teach-list">
-          <li data-i18n="ask-photo-exp1">Shooting cityscapes for 1.5 years on a Nikon Z5 II</li>
-          <li data-i18n="ask-photo-exp2">Shot in Shanghai, Hong Kong and Chengdu — I know the best spots and times in each</li>
-          <li data-i18n="ask-photo-exp3">Long exposures, skylines, street scenes; editing in Photoshop</li>
-        </ul>
-      </div>
-
-      <div class="ask-block ask-block-d">
-        <p class="teach-h" data-i18n="ask-time">Time I can give</p>
-        <ul class="teach-list">
-          <li data-i18n="ask-photo-time1">1–2 outdoor shoots a month (weekend dusk or dawn, weather permitting)</li>
-          <li data-i18n="ask-photo-time2">I can review your photos and answer questions online anytime</li>
-        </ul>
-      </div>
-
-      <div class="ask-block ask-block-e">
-        <p class="teach-h" data-i18n="ask-start">How to start</p>
-        <ul class="teach-list">
-          <li data-i18n="ask-photo-start1">Tell me what camera you have and what you want to shoot</li>
-          <li data-i18n="ask-photo-start2">Start with "why isn't this photo good enough" — I'll review one of your photos</li>
-          <li data-i18n="ask-photo-start3">Book an outdoor shoot and learn on the spot</li>
-        </ul>
-      </div>
     </div>
 
-    <!-- ==========================================================
-         PAGE 02 — WAR THUNDER
-         ========================================================== -->
+    <!-- PAGE 02 — WAR THUNDER: stats, wide media, compact coaching cards -->
     <div class="ask-page ask-page-war">
       <div class="ask-page-head">
         <span class="ask-page-num">02</span>
@@ -351,7 +336,6 @@
         <span class="ask-page-tag" data-i18n="ask-war-tag">Game coaching</span>
       </div>
 
-      <!-- stat badges — hard numbers, game-style -->
       <div class="ask-stats">
         <div class="stat">
           <span class="stat-num" data-i18n="ask-war-stat1-num">Lv.100</span>
@@ -367,47 +351,42 @@
         </div>
       </div>
 
-      <img class="ask-img ask-img-hero" src="images/ask-war-card.jpg" alt="War Thunder ground forces coaching" data-i18n-alt="alt-ask-war" />
+      <img class="ask-img ask-img-hero" src="images/ask-war-card.jpg" alt="War Thunder game coaching" data-i18n-alt="alt-ask-war" />
 
-      <div class="ask-block ask-block-a">
-        <p class="teach-h" data-i18n="ask-who">Who it's for</p>
-        <p class="teach-p" data-i18n="ask-war-who">New players who want to play but don't know where to start, or people who've played a while but keep getting destroyed and can't figure out how to improve.</p>
-      </div>
-
-      <div class="ask-block ask-block-b">
-        <p class="teach-h" data-i18n="ask-do">What we'll do</p>
-        <ul class="teach-list">
-          <li data-i18n="ask-war-do1">Help you pick the first tank worth grinding — no wasted time</li>
-          <li data-i18n="ask-war-do2">Teach basic positioning: finding cover, when to push or hold, reading the minimap</li>
-          <li data-i18n="ask-war-do3">Core gunnery: angling, baiting tracks, where to shoot to penetrate — and play together</li>
-        </ul>
+      <div class="ask-block ask-block-lesson">
+        <div class="ask-intro">
+          <p class="teach-h" data-i18n="ask-who">Who it's for</p>
+          <p class="teach-p" data-i18n="ask-war-who">New players, or anyone stuck and ready to improve.</p>
+        </div>
+        <div class="ask-topics">
+          <p class="teach-h" data-i18n="ask-do">What we'll do</p>
+          <ul class="teach-list">
+            <li data-i18n="ask-war-do1">Pick a vehicle and a sensible grind path</li>
+            <li data-i18n="ask-war-do2">Positioning, cover and reading the minimap</li>
+            <li data-i18n="ask-war-do3">Angling, aiming and playing matches together</li>
+          </ul>
+        </div>
       </div>
 
       <img class="ask-img ask-img-side" src="images/ask-war-banner.png" alt="War Thunder gameplay" data-i18n-alt="alt-ask-war" />
 
-      <div class="ask-block ask-block-c">
+      <div class="ask-block ask-block-experience">
         <p class="teach-h" data-i18n="ask-exp">My experience</p>
         <ul class="teach-list">
-          <li data-i18n="ask-war-exp1">War Thunder level 100, 700+ hours of pure playtime</li>
-          <li data-i18n="ask-war-exp2">Top-tier ground &amp; air — China ground and air maxed, US ground maxed, USSR air maxed</li>
-          <li data-i18n="ask-war-exp3">Ground my way up from low tier, so I know every mechanic and where each stage trips people up</li>
-          <li data-i18n="ask-war-exp4">Vehicles I've spaded include the Khalid, T-80UE-1, Su-30 and more — familiar with every nation</li>
+          <li data-i18n="ask-war-exp1">Top-tier ground and air across three maxed nations</li>
+          <li data-i18n="ask-war-exp2">From low tier to top tier — familiar with each stage</li>
         </ul>
       </div>
 
-      <div class="ask-block ask-block-d">
-        <p class="teach-h" data-i18n="ask-time">Time I can give</p>
-        <ul class="teach-list">
-          <li data-i18n="ask-war-time1">1–2 sessions a week, 2–3 hours each (weekends or evenings)</li>
-          <li data-i18n="ask-war-time2">We can play one match first to see your level, then decide where to start</li>
-        </ul>
-      </div>
-
-      <div class="ask-block ask-block-e">
-        <p class="teach-h" data-i18n="ask-start">How to start</p>
-        <ul class="teach-list">
-          <li data-i18n="ask-war-start1">Add me as a friend and tell me what you're playing now — let's play together</li>
-        </ul>
+      <div class="ask-block ask-block-next">
+        <div>
+          <p class="teach-h" data-i18n="ask-time">Time I can give</p>
+          <p class="teach-p" data-i18n="ask-war-time1">1–2 sessions a week, 2–3 hours each.</p>
+        </div>
+        <div class="ask-start">
+          <p class="teach-h" data-i18n="ask-start">How to start</p>
+          <p class="teach-p" data-i18n="ask-war-start1">Add me, tell me your lineup, and we'll play a match.</p>
+        </div>
       </div>
     </div>
   </section>

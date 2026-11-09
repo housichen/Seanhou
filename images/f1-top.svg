@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 240" width="120" height="240">
+  <!-- top-down F1 car, nose pointing up (-y) -->
+  <defs>
+    <linearGradient id="f1body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f342b"/>
+      <stop offset="0.45" stop-color="#12150f"/>
+      <stop offset="0.55" stop-color="#12150f"/>
+      <stop offset="1" stop-color="#2f342b"/>
+    </linearGradient>
+    <linearGradient id="f1tyre" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1b1b"/>
+      <stop offset="0.5" stop-color="#060606"/>
+      <stop offset="1" stop-color="#1b1b1b"/>
+    </linearGradient>
+    <linearGradient id="f1wing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6ff5c"/>
+      <stop offset="1" stop-color="#a8d400"/>
+    </linearGradient>
+  </defs>
+
+  <!-- soft contact shadow -->
+  <ellipse cx="60" cy="124" rx="46" ry="108" fill="#000" opacity="0.35"/>
+
+  <!-- rear wing + endplates -->
+  <rect x="10" y="207" width="100" height="12" rx="3" fill="url(#f1wing)"/>
+  <rect x="3" y="201" width="9" height="26" rx="2" fill="#0c0e09"/>
+  <rect x="108" y="201" width="9" height="26" rx="2" fill="#0c0e09"/>
+  <rect x="26" y="210" width="68" height="2" rx="1" fill="#0c0e09" opacity="0.55"/>
+
+  <!-- diffuser -->
+  <path d="M42 195 L78 195 L72 209 L48 209 Z" fill="#191d15"/>
+
+  <!-- sidepods -->
+  <g id="pod">
+    <path d="M47 92 L34 106 C 29 124 29 146 35 166 L 45 170 L 49 138 Z" fill="url(#f1body)"/>
+    <path d="M35 112 C 31 129 31 147 36 163" fill="none" stroke="#ccff00" stroke-width="1.6" opacity="0.75"/>
+  </g>
+  <use href="#pod" transform="translate(120,0) scale(-1,1)"/>
+
+  <!-- fuselage: nose tip → engine cover -->
+  <path d="M55 28 L65 28 C 69 58 73 88 75 118 L 78 168 L 71 196 L 49 196 L 42 168 L 45 118 C 47 88 51 58 55 28 Z" fill="url(#f1body)"/>
+
+  <!-- nose / spine stripe -->
+  <path d="M58 32 L62 32 L62.6 120 L57.4 120 Z" fill="#ccff00" opacity="0.85"/>
+  <rect x="55" y="126" width="10" height="52" rx="4" fill="#ccff00" opacity="0.18"/>
+
+  <!-- airbox intake -->
+  <rect x="52" y="70" width="16" height="16" rx="5" fill="#0a0c07"/>
+  <rect x="55" y="73" width="10" height="3" rx="1.5" fill="#ccff00" opacity="0.9"/>
+
+  <!-- cockpit + driver -->
+  <ellipse cx="60" cy="101" rx="14" ry="20" fill="#080a06"/>
+  <circle cx="60" cy="98" r="7.6" fill="#e9e9e2"/>
+  <rect x="55.5" y="94" width="9" height="4" rx="2" fill="#ccff00"/>
+  <!-- halo -->
+  <path d="M45 92 A 15 14 0 0 1 75 92" fill="none" stroke="#ccff00" stroke-width="2.6" stroke-linecap="round"/>
+  <rect x="58.6" y="80" width="2.8" height="12" rx="1.4" fill="#ccff00"/>
+
+  <!-- sidepod intake lips -->
+  <path d="M46 94 L52 96" stroke="#ccff00" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/>
+  <path d="M74 94 L68 96" stroke="#ccff00" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/>
+
+  <!-- front wing -->
+  <rect x="12" y="23" width="96" height="11" rx="3" fill="url(#f1wing)"/>
+  <rect x="5" y="19" width="10" height="21" rx="2" fill="#0c0e09"/>
+  <rect x="105" y="19" width="10" height="21" rx="2" fill="#0c0e09"/>
+  <rect x="24" y="30" width="72" height="2" rx="1" fill="#0c0e09" opacity="0.5"/>
+
+  <!-- front suspension -->
+  <path d="M32 74 L47 84 M88 74 L73 84" stroke="#242821" stroke-width="3" stroke-linecap="round"/>
+  <path d="M32 90 L47 92 M88 90 L73 92" stroke="#242821" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- rear tyres -->
+  <rect x="2" y="148" width="30" height="48" rx="10" fill="url(#f1tyre)"/>
+  <rect x="88" y="148" width="30" height="48" rx="10" fill="url(#f1tyre)"/>
+  <rect x="7" y="155" width="4" height="34" rx="2" fill="#ccff00" opacity="0.55"/>
+  <rect x="109" y="155" width="4" height="34" rx="2" fill="#ccff00" opacity="0.55"/>
+
+  <!-- front tyres -->
+  <rect x="6" y="62" width="26" height="40" rx="9" fill="url(#f1tyre)"/>
+  <rect x="88" y="62" width="26" height="40" rx="9" fill="url(#f1tyre)"/>
+  <rect x="11" y="68" width="3.6" height="28" rx="1.8" fill="#ccff00" opacity="0.5"/>
+  <rect x="105.4" y="68" width="3.6" height="28" rx="1.8" fill="#ccff00" opacity="0.5"/>
+
+  <!-- rain light -->
+  <rect x="56" y="197" width="8" height="4" rx="2" fill="#ff3b30"/>
+</svg>
